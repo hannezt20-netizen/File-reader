@@ -58,3 +58,6 @@ Rencana teknis dari sisi hz25 (belum dieksekusi, menunggu konfirmasi hz19 dulu s
 
 ## Update 13 Sept 2026 - Fix bug: bar aksi mode-pilih tumpang tindih dengan pill Terbaru/Folder
 - [PROSES] Ditemukan dari screenshot user (Gambar): SelectionActionBar dan pill toggle Terbaru/Folder sama-sama Alignment.BottomCenter, jadi menumpuk. Fix: sembunyikan pill toggle Terbaru/Folder (if !isSelectionMode) di 3 file sekaligus - ImageGalleryScreen.kt, VideoGalleryScreen.kt, FileListWithModeToggle.kt (pola sama, jadi bug yang sama diperbaiki sekaligus preventif). Menunggu build+tes di HP.
+
+## Update 13 Sept 2026 - Fix lanjutan: bar Gambar mode Terbaru masih menumpuk
+- [PROSES] Fix sebelumnya cuma kena ModeToggleRow di mode Folder (baris 283), terlewat 1 lagi di mode Terbaru/accordion (baris 477) - sekarang sudah dibungkus if(!isSelectionMode) juga. Menunggu konfirmasi tes di HP.

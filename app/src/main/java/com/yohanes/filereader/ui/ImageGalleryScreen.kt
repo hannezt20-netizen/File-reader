@@ -474,7 +474,9 @@ fun ImageGalleryScreen(
             )
         }
 
-        ModeToggleRow(mode = mode, onModeChange = onModeChange)
+        if (!isSelectionMode) {
+            ModeToggleRow(mode = mode, onModeChange = onModeChange)
+        }
     }
 }
 
