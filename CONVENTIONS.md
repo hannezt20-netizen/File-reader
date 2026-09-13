@@ -88,3 +88,9 @@ Proses ke main sekarang dilakukan LANGSUNG oleh eksekutor sendiri - hz11 TIDAK l
 ## Bahasa & Gaya Komunikasi
 - Semua nama fitur, teks UI, dan komentar dalam Bahasa Indonesia
 - Diskusi konsep/desain dulu sebelum mulai coding, terutama untuk perubahan besar
+
+## Aturan Timestamp (baru, 13 Sept 2026)
+Tiap tulis/update LAPORAN-[akun].md, sisipkan jam asli device (bukan tebakan), pakai:
+`date '+%Y-%m-%d %H:%M %Z'`
+Format header entri: `## <judul checkpoint> - YYYY-MM-DD HH:MM WIB`
+Untuk cross-check urutan kejadian vs commit repo: `git log --pretty=format:'%h %ad %s' --date=format:'%Y-%m-%d %H:%M' -10`
