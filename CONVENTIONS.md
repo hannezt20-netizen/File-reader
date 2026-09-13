@@ -94,3 +94,12 @@ Tiap tulis/update LAPORAN-[akun].md, sisipkan jam asli device (bukan tebakan), p
 `date '+%Y-%m-%d %H:%M %Z'`
 Format header entri: `## <judul checkpoint> - YYYY-MM-DD HH:MM WIB`
 Untuk cross-check urutan kejadian vs commit repo: `git log --pretty=format:'%h %ad %s' --date=format:'%Y-%m-%d %H:%M' -10`
+
+### Aturan darurat build gagal (usulan hz19, 13 Sept)
+Begitu build merah terdeteksi, SEBELUM lanjut coba fix apa pun, akun yang sedang menangani WAJIB catat dulu error-nya secara ringkas ke `LAPORAN-[akun].md` masing-masing, dengan format:
+```
+[BUG AKTIF] Build gagal - <ringkasan error singkat, contoh: "Unresolved reference X di FileY.kt baris Z">
+```
+Alasan: kalau sesi/kuota akun yang sedang debug habis mendadak (tanpa sempat commit fix), akun lain - atau akun yang sama di sesi berikutnya - bisa langsung tahu kondisi terakhir dari repo, tanpa perlu menebak dari commit terakhir atau menunggu akun asli kembali online.
+
+Baris `[BUG AKTIF]` ini dihapus dari laporan begitu build sudah hijau lagi (dipindah jadi catatan ringkas di Log Pencapaian, seperti alur bug lain biasanya).
