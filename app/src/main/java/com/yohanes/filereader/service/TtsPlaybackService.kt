@@ -44,8 +44,12 @@ class TtsPlaybackService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        android.widget.Toast.makeText(this, "DEBUG onStartCommand action=${intent?.action}", android.widget.Toast.LENGTH_SHORT).show()
         when (intent?.action) {
-            ACTION_PLAY_PAUSE -> TtsPlaybackBridge.onPlayPause?.invoke()
+            ACTION_PLAY_PAUSE -> {
+                android.widget.Toast.makeText(this, "DEBUG PLAY_PAUSE, callback null? ${TtsPlaybackBridge.onPlayPause == null}", android.widget.Toast.LENGTH_SHORT).show()
+                TtsPlaybackBridge.onPlayPause?.invoke()
+            }
             ACTION_SKIP_NEXT -> TtsPlaybackBridge.onSkipNext?.invoke()
             ACTION_SKIP_PREV -> TtsPlaybackBridge.onSkipPrev?.invoke()
             ACTION_STOP -> TtsPlaybackBridge.onStop?.invoke()
