@@ -50,3 +50,8 @@ Rencana teknis dari sisi hz25 (belum dieksekusi, menunggu konfirmasi hz19 dulu s
 
 ## Update 11 Sept 2026 - Tahap 2: Multi-select (checkpoint 6 - List PDF/Excel/Teks/Favorit)
 - [PROSES] FileListWithModeToggle.kt: FileRowPublic +isSelected (highlight+centang), tap toggle pilih saat mode aktif, SelectionTopBar/SelectionActionBar disisipkan. Wiring penuh di HomeScreen.kt (CategoryDetailScreen). Checkpoint 5 (Gambar) SENGAJA DITUNDA - hz19 masih proses accordion galeri Gambar di file yang sama, dihindari dulu supaya tidak bentrok. Menunggu build+tes di HP.
+
+## Update 13 Sept 2026 - Tahap 2: Multi-select (checkpoint 5 - Gambar)
+- [PROSES] ImageGalleryScreen.kt: ImageThumbnail +isSelected (highlight+centang), tap toggle pilih saat mode aktif di 3 titik (folder terpilih, mode Terbaru paging, AccordionGridItem.FullPhoto), SelectionTopBar/SelectionActionBar disisipkan di folder terpilih & Box utama, BackHandler gabungan. Wiring penuh di HomeScreen.kt. Menunggu build+tes di HP.
+- Konfirmasi ke hz11: checkpoint 3 (Direktori), checkpoint 4 (Video), checkpoint 6 (List PDF/Excel/Teks/Favorit) SUDAH dikonfirmasi user build hijau - mohon update status di TODO.md/STATUS.md dari [PROSES]/menunggu verifikasi jadi [SELESAI].
+- Checkpoint 5 ini SEKALIGUS jadi pembuka blocker untuk rencana multi-select foto hz19 (checkbox+select-all accordion untuk Fase D deteksi duplikat) - begitu ini SELESAI, silakan hz19 lanjut.

@@ -661,6 +661,11 @@ private fun CategoryDetailScreen(
             val monthsForExpandedYearPreview by viewModel.monthsForExpandedYearPreview.collectAsState()
             val expandedDateKey by viewModel.expandedDateKey.collectAsState()
             val photosForExpandedDate by viewModel.photosForExpandedDate.collectAsState()
+            val selectedPaths by viewModel.selectedPaths.collectAsState()
+            val isSelectionMode by viewModel.isSelectionMode.collectAsState()
+            val selectedFileEntities = remember(images, selectedPaths) {
+                images.filter { selectedPaths.contains(it.path) }
+            }
             ImageGalleryScreen(
                 imagesFlow = viewModel.imagesPaged,
                 images = images,
@@ -670,6 +675,13 @@ private fun CategoryDetailScreen(
                 onFolderSelected = { viewModel.selectImageFolder(it) },
                 onFileClick = onFileClick,
                 onFileLongClick = onFileLongClick,
+                selectedPaths = selectedPaths,
+                isSelectionMode = isSelectionMode,
+                onToggleSelect = { viewModel.toggleSelect(it) },
+                onClearSelection = { viewModel.clearSelection() },
+                onCopySelected = { FileClipboard.copy(selectedFileEntities); viewModel.clearSelection() },
+                onCutSelected = { FileClipboard.cut(selectedFileEntities); viewModel.clearSelection() },
+                onDeleteSelected = { viewModel.deleteFiles(selectedFileEntities) },
                 pastMonthsInCurrentYear = pastMonthsInCurrentYear,
                 pastMonthsPreview = pastMonthsPreview,
                 pastYears = pastYears,

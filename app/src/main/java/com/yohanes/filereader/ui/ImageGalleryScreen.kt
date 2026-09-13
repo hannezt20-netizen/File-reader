@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -160,6 +161,13 @@ fun ImageGalleryScreen(
     onFolderSelected: (String?) -> Unit,
     onFileClick: (FileEntity) -> Unit,
     onFileLongClick: (FileEntity) -> Unit,
+    selectedPaths: Set<String>,
+    isSelectionMode: Boolean,
+    onToggleSelect: (FileEntity) -> Unit,
+    onClearSelection: () -> Unit,
+    onCopySelected: () -> Unit,
+    onCutSelected: () -> Unit,
+    onDeleteSelected: () -> Unit,
     pastMonthsInCurrentYear: List<com.yohanes.filereader.data.MonthCount>,
     pastMonthsPreview: Map<String, List<FileEntity>>,
     pastYears: List<com.yohanes.filereader.data.YearCount>,
@@ -189,8 +197,8 @@ fun ImageGalleryScreen(
         return
     }
 
-    BackHandler(enabled = mode == VideoGalleryMode.FOLDER && selectedFolderPath != null) {
-        onFolderSelected(null)
+    BackHandler(enabled = (mode == VideoGalleryMode.FOLDER && selectedFolderPath != null) || isSelectionMode) {
+        if (isSelectionMode) onClearSelection() else onFolderSelected(null)
     }
 
     LaunchedEffect(Unit) {
@@ -230,17 +238,32 @@ fun ImageGalleryScreen(
                         items(selectedFolder.photos, key = { it.path }) { file ->
                             ImageThumbnail(
                                 file = file,
+                                isSelected = selectedPaths.contains(file.path),
                                 onLongClick = { onFileLongClick(file) },
                                 onClick = {
-                                    val idx = selectedFolder.photos.indexOfFirst { it.path == file.path }
-                                    if (idx >= 0) {
-                                        pagerPhotos = selectedFolder.photos
-                                        pagerIndex = idx
+                                    if (isSelectionMode) {
+                                        onToggleSelect(file)
+                                    } else {
+                                        val idx = selectedFolder.photos.indexOfFirst { it.path == file.path }
+                                        if (idx >= 0) {
+                                            pagerPhotos = selectedFolder.photos
+                                            pagerIndex = idx
+                                        }
                                     }
                                 }
                             )
                         }
                     }
+                }
+                if (isSelectionMode) {
+                    SelectionTopBar(count = selectedPaths.size, onClose = onClearSelection, modifier = Modifier.align(Alignment.TopCenter))
+                    SelectionActionBar(
+                        selectedCount = selectedPaths.size,
+                        onCopy = onCopySelected,
+                        onCut = onCutSelected,
+                        onDeleteConfirmed = onDeleteSelected,
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
                 }
             }
             return
@@ -344,15 +367,20 @@ fun ImageGalleryScreen(
                     is GalleryItem.Photo -> {
                         ImageThumbnail(
                             file = item.file,
+                            isSelected = selectedPaths.contains(item.file.path),
                             onLongClick = { onFileLongClick(item.file) },
                             onClick = {
-                                val photoList = pagingItems.itemSnapshotList.items
-                                    .filterIsInstance<GalleryItem.Photo>()
-                                    .map { it.file }
-                                val clickedIndex = photoList.indexOfFirst { it.path == item.file.path }
-                                if (clickedIndex >= 0) {
-                                    pagerPhotos = photoList
-                                    pagerIndex = clickedIndex
+                                if (isSelectionMode) {
+                                    onToggleSelect(item.file)
+                                } else {
+                                    val photoList = pagingItems.itemSnapshotList.items
+                                        .filterIsInstance<GalleryItem.Photo>()
+                                        .map { it.file }
+                                    val clickedIndex = photoList.indexOfFirst { it.path == item.file.path }
+                                    if (clickedIndex >= 0) {
+                                        pagerPhotos = photoList
+                                        pagerIndex = clickedIndex
+                                    }
                                 }
                             }
                         )
@@ -425,13 +453,25 @@ fun ImageGalleryScreen(
                     is AccordionGridItem.FullPhoto -> {
                         ImageThumbnail(
                             file = gridItem.file,
+                            isSelected = selectedPaths.contains(gridItem.file.path),
                             onLongClick = gridItem.onLongClickPhoto,
-                            onClick = gridItem.onClick
+                            onClick = { if (isSelectionMode) onToggleSelect(gridItem.file) else gridItem.onClick() }
                         )
                     }
                 }
             }
         }
+        if (isSelectionMode) {
+            SelectionTopBar(count = selectedPaths.size, onClose = onClearSelection, modifier = Modifier.align(Alignment.TopCenter))
+            SelectionActionBar(
+                selectedCount = selectedPaths.size,
+                onCopy = onCopySelected,
+                onCut = onCutSelected,
+                onDeleteConfirmed = onDeleteSelected,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
+
         ModeToggleRow(mode = mode, onModeChange = onModeChange)
     }
 }
@@ -538,7 +578,7 @@ private fun ImageFolderThumbnail(folder: ImageFolderGroup, onClick: () -> Unit) 
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun ImageThumbnail(file: FileEntity, onClick: () -> Unit, onLongClick: () -> Unit) {
+private fun ImageThumbnail(file: FileEntity, isSelected: Boolean = false, onClick: () -> Unit, onLongClick: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(2.dp)
@@ -564,5 +604,9 @@ private fun ImageThumbnail(file: FileEntity, onClick: () -> Unit, onLongClick: (
                 )
             }
         )
-    }
+    if (isSelected) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)))
+            Icon(Icons.Filled.CheckCircle, contentDescription = "Dipilih", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp))
+        }
+}
 }
