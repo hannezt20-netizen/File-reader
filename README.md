@@ -28,16 +28,18 @@ File-file ini (kecuali CONVENTIONS.md) dikelola oleh koordinator (hz11) dan jadi
 
 ## Fitur yang Sudah Selesai
 
-- **Beranda**: scan otomatis file (incremental - hanya file berubah/baru/hilang yang disentuh, bukan hapus-insert-total), kartu kategori bulat berwarna (PDF/Gambar/Excel/Video/Audio/Teks-Kode/Favorit), kartu Direktori (info penyimpanan) & Analisis (belum berfungsi), search (hanya di Beranda)
+- **Beranda**: scan otomatis file (incremental - hanya file berubah/baru/hilang yang disentuh, bukan hapus-insert-total), kartu kategori bulat berwarna (PDF/Gambar/Excel/Video/Audio/Teks-Kode/Favorit), kartu Direktori (info penyimpanan) & Analisis (menu: Semua Partisi/File Besar/Berkas Terbaru/Folder Kosong/File Redundan/File Duplikat/Keranjang Sampah), search (hanya di Beranda)
 - **Navigasi app**: drawer/hamburger (lebar 3/4 layar, buka hanya lewat tombol pojok kiri atas, gesture-buka dimatikan) berisi Beranda/Terakhir/Direktori/Favorit/Pengaturan (Pengaturan berupa accordion di dalam drawer, bukan layar terpisah)
 - **Di dalam kategori**: tampilan full-screen tanpa TopAppBar/judul/tombol back - back sepenuhnya pakai tombol/gesture sistem Android. Toggle "Terbaru"/"Folder" tersedia di semua kategori KECUALI Audio (untuk kategori list seperti PDF/Excel/Teks-Kode/Favorit: mode Folder = section header per folder; untuk Video/Gambar: mode Folder = drill-down 2 tingkat kartu folder -> isi folder)
 - **PDF Viewer**: swipe antar halaman ala buku, pinch-zoom (bug melebihi frame sudah fix), pan, dark theme, page grid navigasi cepat, mode baca 3-tingkat, OCR (ML Kit v2, untuk PDF hasil scan), Text-to-Speech (translate ke Bahasa Indonesia, kontrol dari notifikasi/lock screen)
-- **Image Viewer & Galeri**: pinch-zoom, pan, double-tap zoom; grid galeri dikelompokkan per bulan (Paging3, untuk koleksi besar ~23rb foto) dengan toggle Terbaru/Folder
+- **Image Viewer & Galeri**: pinch-zoom, pan, double-tap zoom; grid galeri accordion Tahun-Bulan-Tanggal dengan pratinjau foto (Paging3, teruji lancar ~23rb foto), toggle Terbaru/Folder
 - **Video Player**: ExoPlayer/Media3 - kontrol custom minimal, gesture lengkap (tap toggle kontrol, swipe ganti video, tahan-geser speed 2x, double-tap lompat 10 detik), fullscreen ikut rotasi sistem; grid galeri Video dengan toggle Terbaru/Folder (thumbnail frame asli video)
-- **Audio Player**: pemutaran background (MediaSessionService+ExoPlayer, kontrol notifikasi/lock screen), UI neumorphism dengan cover album otomatis dari metadata file
+- **Audio Player**: pemutaran background (MediaSessionService+ExoPlayer, kontrol notifikasi/lock screen), UI neumorphism, playlist custom (tabel Room), navigasi 3 halaman via swipe (Playlist/Pemutar/Lirik) - lirik dari tag USLT tertanam, sedang dikembangkan
 - **Excel (xlsx) Viewer**: lihat/edit sel, simpan (parser dan writer buatan sendiri, bukan Apache POI)
 - **Text/Code Editor**: buka dan edit file teks/kode, konfirmasi simpan sebelum keluar (pengembangan lanjutan dihentikan, versi dasar tetap dipakai)
 - **Sistem Favorit**: tombol bintang di semua viewer, tersimpan terpisah dari database scan
+- **FileActionSheet**: copy/paste/rename/delete via long-press, tersedia di semua kategori file
+- **Mode Pilih (Multi-select)**: pilih banyak file sekaligus (checkbox, select-all), sedang dirampungkan ke semua kategori
 
 ## Fitur dalam Rencana
 
