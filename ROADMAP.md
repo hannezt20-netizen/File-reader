@@ -17,4 +17,4 @@
 - Clipboard tambahan di FileReaderApp
 
 ## Catatan Rilis APK
-- Distribusi APK sebaiknya lewat GitHub Releases (link releases/download/...), bukan link GitHub Actions Artifacts (sering 403/expired)
+- [SELESAI] Upload APK ke GitHub Release sudah jalan (commit 44ae7f8, 13 Sept) - distribusi kini lewat link Releases, bukan Actions Artifacts

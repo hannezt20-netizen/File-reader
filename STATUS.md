@@ -24,3 +24,6 @@ Branch: main (branch-per-akun sudah dihapus semua). Build terkonfirmasi hijau te
 - Notifikasi Audio rombak non-dismissable (ydiv2)
 - Audio Focus request Audio Player & TTS PDF (ydiv2)
 - Checkpoint B UI Playlist ydiv2 (thumbnail/judul/menu opsi)
+
+## Update 13 Sept 2026 - Cek GitHub Actions
+Semua build terbaru di tab Actions HIJAU (checkpoint 5 multi-select Gambar, rombak notifikasi TTS PDF, fix SelectionActionBar tumpang-tindih). Catatan: build hijau = kompilasi sukses saja, BUKAN otomatis berarti sudah dites di HP - status [PROSES] di TODO.md tetap dipakai sampai user konfirmasi tes fungsional.

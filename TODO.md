@@ -8,7 +8,7 @@
 - [SELESAI] Tes data asli ~23rb foto - OK (13 Sept)
 - [BELUM] Sticky header & Fast Scroller - dilewati dulu
 - [MENUNGGU KOORDINASI] Fase D - deteksi foto duplikat (pHash), dipetakan ke menu Analisis>File Duplikat. Perlu sepakati scope dulu
-- [BLOCKED] Multi-select foto - tunggu checkpoint 5 hz25 selesai
+- [BLOCKED] Multi-select foto - checkpoint 5 hz25 (Gambar) sudah dikerjakan & build hijau (13 Sept), menunggu konfirmasi tes HP sebelum hz19 lanjut
 
 ## hz21 - PDF SettingsPanel / Mode Baca
 - [SELESAI] Fix bug PDF mode Scroll (halaman bertumpuk saat zoom) + revisi lanjutan
@@ -21,12 +21,14 @@
 - [SELESAI] Toggle Terbaru/Folder: PDF/Excel/Teks/Favorit/Gambar
 - [SELESAI] Hapus kartu Favorit dari grid Beranda
 - [SELESAI] FileActionSheet penuh (Tugas 2) termasuk integrasi ImageThumbnail Gambar, dikonfirmasi 11 Sept
-- [PROSES] Multi-select: checkpoint 1 fondasi build hijau; checkpoint 2 aksi Pilih menunggu build; checkpoint 3 SelectionBar+Direktori menunggu build+tes; checkpoint 4 Video menunggu build+tes; checkpoint 6 List PDF/Excel/Teks/Favorit menunggu build+tes
-- [BISA DILANJUT] Checkpoint 5 (Gambar) - sebelumnya ditunda krn hz19 proses accordion di file sama, accordion hz19 SUDAH SELESAI, perlu konfirmasi ke hz25 utk lanjut
+- [SELESAI] Multi-select checkpoint 1,2,3,4,6 (fondasi/aksi Pilih/Direktori/Video/List) - dikonfirmasi user build hijau
+- [PROSES] Checkpoint 5 (Gambar) - dikerjakan 13 Sept, build hijau Actions, menunggu konfirmasi tes HP. Jadi pembuka blocker multi-select foto hz19
+- [PROSES] Fix bug SelectionActionBar tumpang-tindih pill toggle (Image/Video/List) - build hijau, menunggu tes HP
 - [BELUM] Long-press folder kosong di Direktori utk dihapus
 
 ## ydiv2 (dibantu yhs13 di Audio) - PDF TTS / Audio Player
-- [SELESAI] TTS: tombol close bar, kontrol notifikasi/lock screen
+- [SELESAI] TTS: tombol close bar
+- [PROSES] TTS: kontrol notifikasi/lock screen - ternyata sejak awal service-nya belum pernah didaftarkan/disambungkan (tidak pernah muncul). Diperbaiki 13 Sept: daftar manifest, sambung callback, tombol X ditambah. Build hijau Actions, menunggu tes HP
 - [SELESAI] Audio Player dasar - Tahap A (redesain UI) - Tahap B (playlist Room) - Tahap C1 (3 halaman swipe)
 - [SELESAI] Fix bug judul&lagu tidak sinkron di tab Playlist
 - [PROSES] Tahap C2 Lirik DIROMBAK: sumber dari tag USLT tertanam (bukan .lrc privat lagi) + deteksi otomatis pola waktu. Checkpoint A (Id3UsltReader+readTitle) proses; Checkpoint B (UI Playlist thumbnail+judul+menu) proses, belum tes manual
