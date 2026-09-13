@@ -101,6 +101,8 @@ fun PdfViewerScreen(uri: Uri, displayName: String) {
         pageCount = session.pageCount
         onDispose {
             PdfRenderSessionCache.closeIfMatches(uri)
+            TtsHelper.stop()
+            context.stopService(android.content.Intent(context, com.yohanes.filereader.service.TtsPlaybackService::class.java))
         }
     }
 
@@ -125,6 +127,21 @@ fun PdfViewerScreen(uri: Uri, displayName: String) {
     var ttsSentences by remember { mutableStateOf<List<String>>(emptyList()) }
     var ttsSentenceIndex by remember { mutableStateOf(0) }
     var ttsCurrentPageIndex by remember { mutableStateOf(0) }
+
+    LaunchedEffect(ttsActive) {
+        val serviceIntent = android.content.Intent(context, com.yohanes.filereader.service.TtsPlaybackService::class.java)
+        if (ttsActive) {
+            androidx.core.content.ContextCompat.startForegroundService(context, serviceIntent)
+        } else {
+            context.stopService(serviceIntent)
+        }
+    }
+
+    LaunchedEffect(ttsPlaying, ttsActive) {
+        if (ttsActive) {
+            com.yohanes.filereader.service.TtsPlaybackBridge.updateState(ttsPlaying, displayName)
+        }
+    }
 
     BackHandler(enabled = pageGridOpen) {
         pageGridOpen = false
@@ -242,6 +259,33 @@ fun PdfViewerScreen(uri: Uri, displayName: String) {
                     ttsSentenceIndex = sentenceIndex.coerceIn(0, ttsSentences.size - 1)
                     ttsPlaying = true
                     speakSentence(ttsSentenceIndex)
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                com.yohanes.filereader.service.TtsPlaybackBridge.onPlayPause = {
+                    if (ttsPlaying) {
+                        TtsHelper.stop()
+                        ttsPlaying = false
+                    } else {
+                        val pageIdx = if (readerSettings.navMode == NavigasiMode.SWIPE) pagerState.currentPage else scrollListState.firstVisibleItemIndex
+                        playFromPage(pageIdx, ttsSentenceIndex)
+                    }
+                }
+                com.yohanes.filereader.service.TtsPlaybackBridge.onSkipNext = {
+                    val maxIndex = (ttsSentences.size - 1).coerceAtLeast(0)
+                    val newIndex = (ttsSentenceIndex + 1).coerceAtMost(maxIndex)
+                    if (ttsPlaying) playFromPage(ttsCurrentPageIndex, newIndex) else ttsSentenceIndex = newIndex
+                }
+                com.yohanes.filereader.service.TtsPlaybackBridge.onSkipPrev = {
+                    val newIndex = (ttsSentenceIndex - 1).coerceAtLeast(0)
+                    if (ttsPlaying) playFromPage(ttsCurrentPageIndex, newIndex) else ttsSentenceIndex = newIndex
+                }
+                com.yohanes.filereader.service.TtsPlaybackBridge.onStop = {
+                    TtsHelper.stop()
+                    ttsPlaying = false
+                    ttsActive = false
+                    ttsPanelExpanded = false
                 }
             }
 
