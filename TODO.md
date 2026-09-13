@@ -7,8 +7,15 @@
 - [SELESAI] Accordion final (Tahun-Bulan-Tanggal, inline-expand+preview 3 foto), dikonfirmasi 11 Sept. Bug header bulan hilang ikut terselesaikan
 - [SELESAI] Tes data asli ~23rb foto - OK (13 Sept)
 - [BELUM] Sticky header & Fast Scroller - dilewati dulu
-- [MENUNGGU KOORDINASI] Fase D - deteksi foto duplikat (pHash), dipetakan ke menu Analisis>File Duplikat. Perlu sepakati scope dulu
+- [MENUNGGU KOORDINASI] Fase D - deteksi duplikat (semua tipe file, custom pilihan kategori scan), dipetakan ke menu Analisis>File Duplikat
 - [BLOCKED] Multi-select foto - checkpoint 5 hz25 (Gambar) sudah dikerjakan & build hijau (13 Sept), menunggu konfirmasi tes HP sebelum hz19 lanjut
+- [BELUM] Desain ulang tampilan Beranda/kategori (rencana baru 13 Sept, urutan kerja):
+  1. Toggle Grid/List + Sort/Urutkan
+  2. Thumbnail nyata PDF (render halaman pertama), xlsx cukup ikon
+  3. List view: thumbnail+nama+ukuran+tanggal (tanpa kode izin -rw/drw)
+  4. Breadcrumb path + badge persentase penyimpanan
+  5. Multi-tab ala browser (tab per folder, maks 4 tab) - paling akhir, paling kompleks
+- [BELUM] Kartu Analisis dipindah juga ke Beranda (bukan cuma drawer) - fitur maintenance perlu terlihat/mengundang
 
 ## hz21 - PDF SettingsPanel / Mode Baca
 - [SELESAI] Fix bug PDF mode Scroll (halaman bertumpuk saat zoom) + revisi lanjutan

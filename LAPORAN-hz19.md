@@ -147,3 +147,25 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 ### Rencana kerja & file terkait (aktif)
 - **[MENUNGGU KOORDINASI]** Fase D - deteksi foto mirip/duplikat: user akan koordinasi dulu dengan hz25 & hz11 soal siapa pegang halaman Analisis dan cakupan "File Duplikat" (semua tipe file vs foto saja) sebelum eksekusi. Rencana teknis setelah scope jelas: algoritma pHash/dHash, tabel Room baru simpan hash per foto, background job (WorkManager) untuk hashing awal 23rb foto + progress bar, tampilan grup foto mirip di menu "File Duplikat"
 - **[BLOCKED - nunggu hz25]** Fondasi multi-select (checkbox + selection state di ViewModel) - boleh disiapkan paralel selama tidak nyentuh file-ops/posisi toggle Terbaru-Folder
+
+## 2026-09-13 (lanjutan) - Rencana desain tampilan Beranda
+
+### Keputusan baru dari user
+- Kartu "Analisis" akan ditaruh di Beranda (bukan cuma di drawer) - fitur maintenance perlu terlihat/mengundang, angka konkret ("X GB bisa dibersihkan") bukan cuma nama menu polos. Akses lewat drawer tetap dipertahankan sebagai jalan pintas.
+- Fitur "File Duplikat" di kartu Analisis nanti mencakup SEMUA tipe file (bukan foto saja), tapi bisa di-custom user pilih tipe file mana yang mau discan
+- Permintaan desain tampilan Beranda (referensi: screenshot RS File Manager):
+  1. View mode toggle Grid/List
+  2. Sort/Urutkan (nama, tanggal, ukuran)
+  3. Thumbnail nyata untuk PDF (render halaman pertama), xlsx cukup ikon/logo saja
+  4. List view: thumbnail kiri, nama file, lalu ukuran + tanggal (TANPA kode izin -rw/drw)
+  5. Breadcrumb path di atas + badge lingkaran persentase penyimpanan di ujung kanan
+  6. Multi-tab ala browser (tab per lokasi folder, tombol + buka tab baru, X tutup tab) - maksimal 4 tab
+- Urutan prioritas kerja Beranda: (1) toggle Grid/List + Sort dulu -> (2) thumbnail nyata PDF + detail baris -> (3) breadcrumb + badge persentase -> (4) multi-tab ala browser (paling belakang, paling kompleks)
+- Prioritas keseluruhan: beresin tampilan Beranda dulu, baru lanjut ke kartu/fitur Analisis (termasuk Fase D)
+
+### Rencana kerja & file terkait (aktif)
+1. [BELUM] Toggle Grid/List + Sort di layar kategori
+2. [BELUM] Thumbnail nyata PDF (PdfRenderer) + ikon xlsx + detail baris (ukuran+tanggal)
+3. [BELUM] Breadcrumb path + badge persentase penyimpanan
+4. [BELUM] Multi-tab ala browser (maks 4 tab) - disusulkan paling akhir
+5. [MENUNGGU KOORDINASI INTERNAL] Fase D - deteksi duplikat, scope semua tipe file dengan custom pilihan
