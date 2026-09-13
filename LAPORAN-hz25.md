@@ -55,3 +55,6 @@ Rencana teknis dari sisi hz25 (belum dieksekusi, menunggu konfirmasi hz19 dulu s
 - [PROSES] ImageGalleryScreen.kt: ImageThumbnail +isSelected (highlight+centang), tap toggle pilih saat mode aktif di 3 titik (folder terpilih, mode Terbaru paging, AccordionGridItem.FullPhoto), SelectionTopBar/SelectionActionBar disisipkan di folder terpilih & Box utama, BackHandler gabungan. Wiring penuh di HomeScreen.kt. Menunggu build+tes di HP.
 - Konfirmasi ke hz11: checkpoint 3 (Direktori), checkpoint 4 (Video), checkpoint 6 (List PDF/Excel/Teks/Favorit) SUDAH dikonfirmasi user build hijau - mohon update status di TODO.md/STATUS.md dari [PROSES]/menunggu verifikasi jadi [SELESAI].
 - Checkpoint 5 ini SEKALIGUS jadi pembuka blocker untuk rencana multi-select foto hz19 (checkbox+select-all accordion untuk Fase D deteksi duplikat) - begitu ini SELESAI, silakan hz19 lanjut.
+
+## Update 13 Sept 2026 - Fix bug: bar aksi mode-pilih tumpang tindih dengan pill Terbaru/Folder
+- [PROSES] Ditemukan dari screenshot user (Gambar): SelectionActionBar dan pill toggle Terbaru/Folder sama-sama Alignment.BottomCenter, jadi menumpuk. Fix: sembunyikan pill toggle Terbaru/Folder (if !isSelectionMode) di 3 file sekaligus - ImageGalleryScreen.kt, VideoGalleryScreen.kt, FileListWithModeToggle.kt (pola sama, jadi bug yang sama diperbaiki sekaligus preventif). Menunggu build+tes di HP.

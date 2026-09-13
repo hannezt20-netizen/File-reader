@@ -279,7 +279,9 @@ fun ImageGalleryScreen(
                     ImageFolderThumbnail(folder = folder, onClick = { onFolderSelected(folder.path) })
                 }
             }
-            ModeToggleRow(mode = mode, onModeChange = onModeChange)
+            if (!isSelectionMode) {
+                ModeToggleRow(mode = mode, onModeChange = onModeChange)
+            }
         }
         return
     }

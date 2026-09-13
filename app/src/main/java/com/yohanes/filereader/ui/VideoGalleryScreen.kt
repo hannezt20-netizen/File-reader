@@ -165,6 +165,9 @@ fun VideoGalleryScreen(
             )
         }
 
+        if (!isSelectionMode) {
+
+
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -184,6 +187,9 @@ fun VideoGalleryScreen(
                 selected = mode == VideoGalleryMode.FOLDER,
                 onClick = { onModeChange(VideoGalleryMode.FOLDER) }
             )
+        }
+
+
         }
     }
 }

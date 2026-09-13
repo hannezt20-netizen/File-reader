@@ -118,6 +118,9 @@ fun FileListWithModeToggle(
             )
         }
 
+        if (!isSelectionMode) {
+
+
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -137,6 +140,9 @@ fun FileListWithModeToggle(
                 selected = mode == VideoGalleryMode.FOLDER,
                 onClick = { onModeChange(VideoGalleryMode.FOLDER) }
             )
+        }
+
+
         }
     }
 }
