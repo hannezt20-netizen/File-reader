@@ -91,13 +91,14 @@ class TtsPlaybackService : Service() {
             .addAction(android.R.drawable.ic_media_previous, "Mundur", actionPendingIntent(ACTION_SKIP_PREV))
             .addAction(playPauseIcon, "Play/Pause", actionPendingIntent(ACTION_PLAY_PAUSE))
             .addAction(android.R.drawable.ic_media_next, "Maju", actionPendingIntent(ACTION_SKIP_NEXT))
+            .addAction(com.yohanes.filereader.R.drawable.ic_stop_notification, "Tutup", actionPendingIntent(ACTION_STOP))
             .setContentIntent(contentIntent)
             .setStyle(
                 MediaStyle()
                     .setMediaSession(mediaSession?.sessionToken)
                     .setShowActionsInCompactView(0, 1, 2)
             )
-            .setOngoing(isPlaying)
+            .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
     }
