@@ -35,6 +35,13 @@ class TtsPlaybackService : Service() {
     override fun onCreate() {
         super.onCreate()
         val session = MediaSessionCompat(this, "TtsPlaybackService")
+        session.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onPlay() { TtsPlaybackBridge.onPlayPause?.invoke() }
+            override fun onPause() { TtsPlaybackBridge.onPlayPause?.invoke() }
+            override fun onSkipToNext() { TtsPlaybackBridge.onSkipNext?.invoke() }
+            override fun onSkipToPrevious() { TtsPlaybackBridge.onSkipPrev?.invoke() }
+            override fun onStop() { TtsPlaybackBridge.onStop?.invoke() }
+        })
         session.isActive = true
         mediaSession = session
         TtsPlaybackBridge.session = session
@@ -44,12 +51,8 @@ class TtsPlaybackService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        android.widget.Toast.makeText(this, "DEBUG onStartCommand action=${intent?.action}", android.widget.Toast.LENGTH_SHORT).show()
         when (intent?.action) {
-            ACTION_PLAY_PAUSE -> {
-                android.widget.Toast.makeText(this, "DEBUG PLAY_PAUSE, callback null? ${TtsPlaybackBridge.onPlayPause == null}", android.widget.Toast.LENGTH_SHORT).show()
-                TtsPlaybackBridge.onPlayPause?.invoke()
-            }
+            ACTION_PLAY_PAUSE -> TtsPlaybackBridge.onPlayPause?.invoke()
             ACTION_SKIP_NEXT -> TtsPlaybackBridge.onSkipNext?.invoke()
             ACTION_SKIP_PREV -> TtsPlaybackBridge.onSkipPrev?.invoke()
             ACTION_STOP -> TtsPlaybackBridge.onStop?.invoke()
