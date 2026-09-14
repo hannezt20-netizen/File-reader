@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [ main, hz19, hz21, hz25, ydiv2 ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -43,6 +43,7 @@ jobs:
         with:
           name: hzzip-release-apk
           path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 3
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
