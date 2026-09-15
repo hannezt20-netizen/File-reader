@@ -1,14 +1,14 @@
 # TODO.md — Pembagian Kerja Aktif per Akun
 > Diupdate hz11, 13 Sept 2026. [SELESAI]/[PROSES]/[BELUM]
 
-## PRIORITAS UTAMA SEKARANG (revisi 14 Sept, dari sesi desain yhs13)
-1. [hz25] Fix bug Android/data folder kosong - baca folder live dari sistem file (bukan DB scan). Root cause dikonfirmasi BUKAN izin
-2. [hz25] T1 - Fondasi multi-tab: pindah trigger-scan & fileOpsTick jadi objek global, currentDir masuk ke HomeViewModel. WAJIB sendirian, jangan barengan sesi lain sentuh HomeViewModel.kt/MainActivity.kt
-3. [hz25] Verifikasi tes HP: checkpoint 5 multi-select Gambar + fix overlap SelectionActionBar/pill toggle
-4. [ydiv2] Verifikasi tes HP: notifikasi TTS PDF (tombol X+callback) + Audio Focus Player&TTS
-5. [BELUM ditugaskan] Dialog Properti + deteksi .zip + Kompres/Ekstrak (java.util.zip) - mandiri, aman dikerjakan kapan saja
+## PRIORITAS UTAMA (revisi 15 Sept)
+1. [SELESAI-hz25] Android/data: pembatasan sistem Android 11+ (FUSE), tak bisa diperbaiki - solusi: pesan "Dibatasi sistem Android"
+2. [SELESAI-hz25] T1 Fondasi multi-tab: ScanManager.kt global + currentDir StateFlow - dikonfirmasi build+tes
+3. [PROSES-hz25] Checkpoint 5 multi-select Gambar - masih menunggu tes HP
+4. [PROSES-ydiv2] Bug baru: tombol X notif TTS tak muncul di Media Controls - perlu addCustomAction
+5. [BELUM] Dialog Properti + zip Kompres/Ekstrak - mandiri, belum ditugaskan
 
-> Detail rancangan lengkap: LAPORAN-yhs13.md. Breakdown akun di bawah tetap dipakai utk tracking detail teknis.
+> Item ydiv2 lain sudah CONFIRMED. Detail: LAPORAN-hz25.md, LAPORAN-ydiv2.md.
 
 ## hz19 - Gambar
 - [SELESAI] Viewer full-screen + semua bug terkait
@@ -18,13 +18,14 @@
 - [BELUM] Sticky header & Fast Scroller - dilewati dulu
 - [MENUNGGU KOORDINASI] Fase D - deteksi duplikat (semua tipe file, custom pilihan kategori scan), dipetakan ke menu Analisis>File Duplikat
 - [BLOCKED] Multi-select foto - checkpoint 5 hz25 (Gambar) sudah dikerjakan & build hijau (13 Sept), menunggu konfirmasi tes HP sebelum hz19 lanjut
-- [BELUM] Desain ulang tampilan Beranda/kategori (rencana baru 13 Sept, urutan kerja):
+- [BELUM] Desain ulang Beranda/kategori (digabung dgn desain yhs13, bukan 2 rencana beda - keduanya multi-tab maks 4):
   1. Toggle Grid/List + Sort/Urutkan
-  2. Thumbnail nyata PDF (render halaman pertama), xlsx cukup ikon
-  3. List view: thumbnail+nama+ukuran+tanggal (tanpa kode izin -rw/drw)
+  2. Thumbnail nyata PDF (render halaman 1), xlsx cukup ikon
+  3. List view: thumbnail+nama+ukuran+tanggal
   4. Breadcrumb path + badge persentase penyimpanan
-  5. Multi-tab ala browser (tab per folder, maks 4 tab) - paling akhir, paling kompleks
-- [BELUM] Kartu Analisis dipindah juga ke Beranda (bukan cuma drawer) - fitur maintenance perlu terlihat/mengundang
+  5. Multi-tab (=T2-T4 yhs13) - paling akhir
+- [SELESAI] Kartu Analisis dipindah ke Beranda - sudah masuk desain final yhs13
+- [PROSES] Analisis submodul File Besar: AnalisisViewModel.kt+FileBesarScreen.kt (mandiri) - menunggu build. Wiring navigasi bisa lanjut (T1 sudah selesai)
 
 ## hz21 - PDF SettingsPanel / Mode Baca
 - [SELESAI] Fix bug PDF mode Scroll (halaman bertumpuk saat zoom) + revisi lanjutan
@@ -40,16 +41,19 @@
 - [SELESAI] Multi-select checkpoint 1,2,3,4,6 (fondasi/aksi Pilih/Direktori/Video/List) - dikonfirmasi user build hijau
 - [PROSES] Checkpoint 5 (Gambar) - dikerjakan 13 Sept, build hijau Actions, menunggu konfirmasi tes HP. Jadi pembuka blocker multi-select foto hz19
 - [PROSES] Fix bug SelectionActionBar tumpang-tindih pill toggle (Image/Video/List) - build hijau, menunggu tes HP
+- [SELESAI] Bug Android/data folder kosong - ternyata pembatasan sistem Android 11+ (FUSE), bukan soal DB-vs-live. Solusi: pesan "Dibatasi sistem Android" utk folder app lain
+- [SELESAI] T1 Fondasi multi-tab - ScanManager.kt (global) + currentDir jadi StateFlow HomeViewModel (4 titik disesuaikan)
 - [BELUM] Long-press folder kosong di Direktori utk dihapus
 
 ## ydiv2 (dibantu yhs13 di Audio) - PDF TTS / Audio Player
 - [SELESAI] TTS: tombol close bar
-- [PROSES] TTS: kontrol notifikasi/lock screen - ternyata sejak awal service-nya belum pernah didaftarkan/disambungkan (tidak pernah muncul). Diperbaiki 13 Sept: daftar manifest, sambung callback, tombol X ditambah. Build hijau Actions, menunggu tes HP
+- [SELESAI] TTS: kontrol notifikasi/lock screen dasar (Prev/Play/Next+tombol X) - dikonfirmasi
+- [PROSES] Bug lanjutan: tombol X notif TTS blm muncul di Media Controls modern - perlu addCustomAction
 - [SELESAI] Audio Player dasar - Tahap A (redesain UI) - Tahap B (playlist Room) - Tahap C1 (3 halaman swipe)
 - [SELESAI] Fix bug judul&lagu tidak sinkron di tab Playlist
-- [PROSES] Tahap C2 Lirik DIROMBAK: sumber dari tag USLT tertanam (bukan .lrc privat lagi) + deteksi otomatis pola waktu. Checkpoint A (Id3UsltReader+readTitle) proses; Checkpoint B (UI Playlist thumbnail+judul+menu) proses, belum tes manual
-- [PROSES] Rombak notifikasi Audio (non-dismissable, tombol X stop) - 2x iterasi fix, menunggu build hijau final
-- [PROSES] Audio Focus request di AudioPlayerService & TTS PDF - menunggu build+tes
-- [BELUM] Hapus tombol hamburger dari PlayerControlBar (redundant sejak swipe)
-- [BELUM] Tahap C3-C5 Lirik (highlight sinkron, editor Sederhana, editor Disinkronkan)
+- [SELESAI] Tahap C2 Lirik DIROMBAK: sumber tag USLT tertanam, Checkpoint A+B (reader/judul+UI Playlist) - dikonfirmasi
+- [SELESAI] Rombak notifikasi Audio (non-dismissable, tombol X stop) - dikonfirmasi
+- [SELESAI] Audio Focus request AudioPlayerService & TTS PDF - dikonfirmasi
+- ~~Hapus tombol hamburger PlayerControlBar~~ - sudah selesai dari dulu
+- ~~Tahap C3-C5 Lirik~~ - BASI: C3 sudah lama jadi, C4/C5 dibatalkan final (pivot gaya Musicolet)
 - Bug build clickable URGENT (8 Sept) SUDAH BASI, dikonfirmasi ydiv2 - dihapus dari daftar

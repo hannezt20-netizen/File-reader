@@ -20,10 +20,12 @@ Branch: main (branch-per-akun sudah dihapus semua). Build terkonfirmasi hijau te
 - Build error clickable AudioPlayerScreen (basi, 5 build terakhir main sukses)
 
 ## Perlu Verifikasi User (build+tes HP)
-- Multi-select checkpoint 2,3,4,6 (hz25)
-- Notifikasi Audio rombak non-dismissable (ydiv2)
-- Audio Focus request Audio Player & TTS PDF (ydiv2)
-- Checkpoint B UI Playlist ydiv2 (thumbnail/judul/menu opsi)
+- Checkpoint 5 multi-select Gambar (hz25) - satu-satunya sisa
+- Bug baru: tombol X notif TTS tak muncul di Media Controls (ydiv2, perlu addCustomAction)
+
+## Sudah Confirmed (audit ydiv2, 15 Sept)
+- Multi-select checkpoint 1,2,3,4,6 + T1 Fondasi multi-tab (hz25)
+- Notifikasi Audio, Audio Focus Player&TTS, Checkpoint B UI Playlist (ydiv2)
 
 ## Update 13 Sept 2026 - Cek GitHub Actions
 Semua build terbaru di tab Actions HIJAU (checkpoint 5 multi-select Gambar, rombak notifikasi TTS PDF, fix SelectionActionBar tumpang-tindih). Catatan: build hijau = kompilasi sukses saja, BUKAN otomatis berarti sudah dites di HP - status [PROSES] di TODO.md tetap dipakai sampai user konfirmasi tes fungsional.
@@ -33,5 +35,5 @@ Semua build terbaru di tab Actions HIJAU (checkpoint 5 multi-select Gambar, romb
 - Mode Pilih & Clipboard: 1 clipboard GLOBAL (bukan per-tab), diakses via ikon di bar atas
 - Arsitektur multi-tab: state per-tab (kategori/search/sort/Direktori/mode pilih dll) vs state global (data Room, trigger scan, fileOpsTick, Favorit, Clipboard) sudah dipetakan - WAJIB baca LAPORAN-yhs13.md sebelum sentuh MainActivity.kt/HomeViewModel.kt lagi
 
-## Bug Aktif (tambahan)
-- Android/data/<paket> tampil "Folder kosong": root cause DIKONFIRMASI bukan izin (MANAGE_EXTERNAL_STORAGE sudah ON) - Direktori baca dari DB scan yg tidak menjangkau folder ini, perlu baca live utk path tsb
+## Bug Aktif (tambahan) - RESOLVED 14 Sept
+- ~~Android/data/<paket> tampil "Folder kosong"~~ - root cause TERNYATA pembatasan sistem Android 11+ (FUSE), BUKAN soal DB-vs-live (koreksi diagnosis awal). Tidak ada cara legal tanpa root/Shizuku. Solusi final: pesan jujur "Dibatasi sistem Android" utk folder app lain, folder app sendiri tetap normal
