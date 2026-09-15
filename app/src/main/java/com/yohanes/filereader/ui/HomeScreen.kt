@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.background
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -438,7 +439,15 @@ private fun DirektoriScreen(
                 Text("Folder kosong")
             }
         } else {
-            LazyColumn(Modifier.fillMaxSize()) {
+            val (savedIndex, savedOffset) = remember(currentDir) { viewModel.getDirektoriScrollPosition(currentDir.path) }
+            val listState = androidx.compose.foundation.lazy.rememberLazyListState(savedIndex, savedOffset)
+            LaunchedEffect(currentDir) {
+                snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
+                    .collect { (index, offset) ->
+                        viewModel.saveDirektoriScrollPosition(currentDir.path, index, offset)
+                    }
+            }
+            LazyColumn(Modifier.fillMaxSize(), state = listState) {
                 items(entries) { entry ->
                     if (entry.isDirectory) {
                         Row(

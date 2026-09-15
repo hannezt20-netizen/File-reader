@@ -428,6 +428,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val currentDir: StateFlow<java.io.File> = _currentDir
     fun setCurrentDir(dir: java.io.File) { _currentDir.value = dir }
 
+    // Posisi scroll Direktori per-folder (fix keluhan user 15 Sept: balik dari viewer
+    // file selalu ke atas folder, padahal foldernya sudah benar diingat sejak T1).
+    // Key = path folder, value = (firstVisibleItemIndex, scrollOffset).
+    private val _direktoriScrollPositions = MutableStateFlow<Map<String, Pair<Int, Int>>>(emptyMap())
+    fun getDirektoriScrollPosition(path: String): Pair<Int, Int> = _direktoriScrollPositions.value[path] ?: (0 to 0)
+    fun saveDirektoriScrollPosition(path: String, index: Int, offset: Int) {
+        _direktoriScrollPositions.value = _direktoriScrollPositions.value + (path to (index to offset))
+    }
+
     // T2 multi-tab: tab aktif (Beranda-kategori vs Terakhir) - per-tab juga,
     // konsisten dgn selectedCategory/showDirektori/currentDir yang sudah di sini.
     private val _selectedTab = MutableStateFlow(AppTab.HOME)

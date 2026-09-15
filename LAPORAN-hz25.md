@@ -87,3 +87,7 @@ Rencana teknis dari sisi hz25 (belum dieksekusi, menunggu konfirmasi hz19 dulu s
 - [PROSES] Fix bug: tabIds/activeTabId/homeViewModel/selectedTab sebelumnya ada DI DALAM blok `if (uri == null)` di MainActivity.kt - begitu file viewer dibuka, seluruh state tab dilepas total dari composition tree (pola bug lama yang sama seperti dicatat STATUS.md soal state navigasi harus di ViewModel bukan remember lokal, kali ini remember-nya sendiri yang salah tempat). Dipindah ke luar blok tsb, sekarang tetap hidup walau viewer file dibuka/ditutup.
 - [PROSES] Fitur baru (permintaan user): tombol "+" (ikon CreateNewFolder) di ujung kanan baris breadcrumb Direktori, buka dialog nama folder + validasi karakter terlarang, lalu java.io.File.mkdir() + notifyFileOpsChanged().
 - Menunggu build+tes di HP - PENTING: tes ulang skenario buka file lalu back, pastikan balik ke tab semula (bukan loncat Beranda).
+
+## Update 15 Sept 2026 - Fix: Direktori ingat posisi scroll per-folder
+- [PROSES] Keluhan user: folder sudah diingat benar (T1) tapi posisi scroll selalu balik ke atas tiap keluar-masuk viewer file. Fix: tambah state Map<path, Pair<index,offset>> di HomeViewModel (getDirektoriScrollPosition/saveDirektoriScrollPosition), LazyColumn Direktori sekarang pakai rememberLazyListState dari posisi tersimpan + snapshotFlow untuk terus menyimpan posisi terbaru selama scroll.
+- Menunggu build+tes di HP.
