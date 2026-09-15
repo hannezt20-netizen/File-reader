@@ -169,3 +169,14 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 3. [BELUM] Breadcrumb path + badge persentase penyimpanan
 4. [BELUM] Multi-tab ala browser (maks 4 tab) - disusulkan paling akhir
 5. [MENUNGGU KOORDINASI INTERNAL] Fase D - deteksi duplikat, scope semua tipe file dengan custom pilihan
+
+## 2026-09-14 (lanjutan 2) - Mulai Opsi A: Analisis submodul File Besar
+
+### Fase Kerja
+- [PROSES] Backend "File Besar": query getLargestFiles di FileDao.kt (urut ukuran terbesar) + AnalisisViewModel.kt (mandiri, tidak bergantung HomeViewModel.kt) + FileBesarScreen.kt (daftar nama+ukuran file terbesar). Menunggu hasil build Actions.
+- [BELUM] Sambung FileBesarScreen ke navigasi asli (MainActivity.kt) - DITUNDA sampai hz25 selesai T1 fondasi multi-tab
+
+### Rencana Kerja & File Terkait (aktif)
+- data/FileDao.kt - tambah fungsi getLargestFiles(limit)
+- ui/analisis/AnalisisViewModel.kt (baru) - baca file terbesar langsung dari FileDao, tidak sentuh HomeViewModel.kt
+- ui/analisis/FileBesarScreen.kt (baru) - tampilkan daftar file terbesar, fungsi format ukuran dibuat lokal (tidak pinjam dari file lain)

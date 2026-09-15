@@ -141,6 +141,10 @@ interface FileDao {
         LIMIT :limit
     """)
     suspend fun getPreviewPhotosForDate(date: String, limit: Int = 3): List<FileEntity>
+
+    // === Ditambahkan untuk Analisis: submodul File Besar ===
+    @Query("SELECT * FROM files ORDER BY sizeBytes DESC LIMIT :limit")
+    fun getLargestFiles(limit: Int = 100): Flow<List<FileEntity>>
 }
 
 data class DayCount(val day: String, val count: Int)
