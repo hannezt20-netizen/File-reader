@@ -36,6 +36,7 @@ import com.yohanes.filereader.data.ClipboardOp
 import com.yohanes.filereader.data.FileClipboard
 import com.yohanes.filereader.data.FileEntity
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.ContentPaste
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
@@ -341,25 +342,78 @@ private fun DirektoriScreen(
 
         val relative = currentDir.path.removePrefix(rootPath).trim('/')
         val segments = if (relative.isBlank()) listOf("Internal") else listOf("Internal") + relative.split("/")
+        var showNewFolderDialog by remember { mutableStateOf(false) }
         Row(
-            Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(16.dp, 0.dp, 16.dp, 8.dp),
+            Modifier.fillMaxWidth().padding(16.dp, 0.dp, 16.dp, 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            segments.forEachIndexed { index, seg ->
-                Text(
-                    seg,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        val target = if (index == 0) rootPath
-                            else rootPath + "/" + segments.drop(1).take(index).joinToString("/")
-                        viewModel.setCurrentDir(java.io.File(target))
+            Row(
+                Modifier.weight(1f).horizontalScroll(rememberScrollState()),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                segments.forEachIndexed { index, seg ->
+                    Text(
+                        seg,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            val target = if (index == 0) rootPath
+                                else rootPath + "/" + segments.drop(1).take(index).joinToString("/")
+                            viewModel.setCurrentDir(java.io.File(target))
+                        }
+                    )
+                    if (index != segments.lastIndex) {
+                        Text(" > ", style = MaterialTheme.typography.bodySmall)
                     }
-                )
-                if (index != segments.lastIndex) {
-                    Text(" > ", style = MaterialTheme.typography.bodySmall)
                 }
             }
+            IconButton(onClick = { showNewFolderDialog = true }) {
+                Icon(Icons.Filled.CreateNewFolder, contentDescription = "Buat folder baru")
+            }
+        }
+
+        if (showNewFolderDialog) {
+            var newFolderName by remember { mutableStateOf("") }
+            val invalidChars = remember { "[/\\:*?\"<>|]".toRegex() }
+            val isValid = newFolderName.isNotBlank() && !invalidChars.containsMatchIn(newFolderName)
+            AlertDialog(
+                onDismissRequest = { showNewFolderDialog = false },
+                title = { Text("Folder Baru") },
+                text = {
+                    Column {
+                        OutlinedTextField(
+                            value = newFolderName,
+                            onValueChange = { newFolderName = it },
+                            singleLine = true,
+                            isError = !isValid && newFolderName.isNotEmpty(),
+                            label = { Text("Nama folder") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        if (!isValid && newFolderName.isNotEmpty()) {
+                            Text(
+                                "Nama tidak boleh kosong atau mengandung karakter / \\ : * ? \" < > |",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        enabled = isValid,
+                        onClick = {
+                            val newFolder = java.io.File(currentDir, newFolderName)
+                            if (newFolder.mkdir()) {
+                                viewModel.notifyFileOpsChanged()
+                            }
+                            showNewFolderDialog = false
+                        }
+                    ) { Text("Buat") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showNewFolderDialog = false }) { Text("Batal") }
+                }
+            )
         }
 
         if (isRestrictedSystemFolder) {

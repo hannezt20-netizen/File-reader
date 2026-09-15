@@ -82,3 +82,8 @@ Rencana teknis dari sisi hz25 (belum dieksekusi, menunggu konfirmasi hz19 dulu s
 - [PROSES] Tombol "Bersihkan" (outline, di kiri) ditambah di sebelah tombol "Tempel" yang sudah ada di DirektoriScreen - sesuai mockup 2-tombol yang diminta user. Tap Bersihkan = FileClipboard.clear() tanpa eksekusi paste.
 - Catatan arsitektur: sebagian besar T3 (ikon clipboard mengambang antar-tab, aturan tujuan wajib folder nyata) TERNYATA SUDAH otomatis terpenuhi sejak Tahap 2 - karena FileClipboard bersifat global (bukan per-tab) dan bar Tempel cuma dirender di DirektoriScreen (kategori agregat seperti Gambar/Video memang tidak punya bar Tempel). Jadi cukup tambahan kecil ini untuk melengkapi spek user.
 - Menunggu build+tes di HP.
+
+## Update 15 Sept 2026 - Fix bug back-ke-Beranda + tombol Folder Baru
+- [PROSES] Fix bug: tabIds/activeTabId/homeViewModel/selectedTab sebelumnya ada DI DALAM blok `if (uri == null)` di MainActivity.kt - begitu file viewer dibuka, seluruh state tab dilepas total dari composition tree (pola bug lama yang sama seperti dicatat STATUS.md soal state navigasi harus di ViewModel bukan remember lokal, kali ini remember-nya sendiri yang salah tempat). Dipindah ke luar blok tsb, sekarang tetap hidup walau viewer file dibuka/ditutup.
+- [PROSES] Fitur baru (permintaan user): tombol "+" (ikon CreateNewFolder) di ujung kanan baris breadcrumb Direktori, buka dialog nama folder + validasi karakter terlarang, lalu java.io.File.mkdir() + notifyFileOpsChanged().
+- Menunggu build+tes di HP - PENTING: tes ulang skenario buka file lalu back, pastikan balik ke tab semula (bukan loncat Beranda).

@@ -170,6 +170,16 @@ class MainActivity : ComponentActivity() {
         return
     }
 
+        // Dinaikkan ke luar blok "uri == null" (fix bug T4, 15 Sept 2026): sebelumnya
+        // tabIds/activeTabId/homeViewModel ada DI DALAM blok itu, jadi begitu file
+        // viewer dibuka (uri terisi), seluruh state tab ikut dilepas total dari
+        // composition - waktu back ditekan, tab ter-reset ke 1 tab baru default
+        // Beranda. Sekarang tetap hidup terlepas viewer file terbuka atau tidak.
+        val tabIds = remember { mutableStateListOf(nextTabId()) }
+        var activeTabId by remember { mutableStateOf(tabIds.first()) }
+        val homeViewModel: HomeViewModel = viewModel(key = activeTabId)
+        val selectedTab by homeViewModel.selectedTab.collectAsState()
+
         val uri = currentUri
         if (uri != null) {
             androidx.activity.compose.BackHandler {
@@ -177,10 +187,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         if (uri == null) {
-            val tabIds = remember { mutableStateListOf(nextTabId()) }
-            var activeTabId by remember { mutableStateOf(tabIds.first()) }
-            val homeViewModel: HomeViewModel = viewModel(key = activeTabId)
-            val selectedTab by homeViewModel.selectedTab.collectAsState()
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val drawerScope = rememberCoroutineScope()
             ModalNavigationDrawer(
