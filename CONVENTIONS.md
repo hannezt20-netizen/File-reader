@@ -103,3 +103,6 @@ Begitu build merah terdeteksi, SEBELUM lanjut coba fix apa pun, akun yang sedang
 Alasan: kalau sesi/kuota akun yang sedang debug habis mendadak (tanpa sempat commit fix), akun lain - atau akun yang sama di sesi berikutnya - bisa langsung tahu kondisi terakhir dari repo, tanpa perlu menebak dari commit terakhir atau menunggu akun asli kembali online.
 
 Baris `[BUG AKTIF]` ini dihapus dari laporan begitu build sudah hijau lagi (dipindah jadi catatan ringkas di Log Pencapaian, seperti alur bug lain biasanya).
+
+## Akun Baru (14 Sept 2026)
+yhs13 ditambahkan sebagai akun kontributor - fokus desain/restyle & review arsitektur, sesekali bantu perbaikan kode kategori lain. Laporan: LAPORAN-yhs13.md (pola sama - append per pencapaian, bukan file baru per tanggal).

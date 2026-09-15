@@ -18,3 +18,12 @@
 
 ## Catatan Rilis APK
 - [SELESAI] Upload APK ke GitHub Release sudah jalan (commit 44ae7f8, 13 Sept) - distribusi kini lewat link Releases, bukan Actions Artifacts
+
+## Restyle & Fitur Baru (dari sesi desain yhs13, 14 Sept)
+- Restyle Beranda: pill tab + tombol tab baru, 2 kartu (Storage+Analisis), grid 6 kategori, baris ke-4 dihapus - setelah T1 selesai
+- Restyle Direktori: ikon folder glossy biru, badge Download/DCIM/WhatsApp, ikon app asli utk Android/data/<paket>, ikon cari-dalam-folder, subjudul dari MAX(lastModified) termasuk subfolder
+- Restyle Analisis: gaya daftar (bukan pie chart), tambah kategori Apps & Archives, urutan submodul File Besar->Garis Besar->Semua Partisi
+- T2-T4 multi-tab lanjutan: pill tab dinamis (maks 4 tab), wiring drawer ke tab aktif, edge case tutup tab
+- Fitur besar baru: App Manager (daftar app terpasang, detail izin/aktivitas, uninstall, backup APK) - akses dari drawer
+- Clipboard tersambung ke clipboard sistem Android dua arah (ClipData+FileProvider)
+- Menu "Lebih banyak": Sembunyikan/Bagikan/Properti/Pindahkan/Salin/Kompres (item jaringan LAN/FTP/Cloud dipangkas)

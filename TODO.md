@@ -1,6 +1,15 @@
 # TODO.md — Pembagian Kerja Aktif per Akun
 > Diupdate hz11, 13 Sept 2026. [SELESAI]/[PROSES]/[BELUM]
 
+## PRIORITAS UTAMA SEKARANG (revisi 14 Sept, dari sesi desain yhs13)
+1. [hz25] Fix bug Android/data folder kosong - baca folder live dari sistem file (bukan DB scan). Root cause dikonfirmasi BUKAN izin
+2. [hz25] T1 - Fondasi multi-tab: pindah trigger-scan & fileOpsTick jadi objek global, currentDir masuk ke HomeViewModel. WAJIB sendirian, jangan barengan sesi lain sentuh HomeViewModel.kt/MainActivity.kt
+3. [hz25] Verifikasi tes HP: checkpoint 5 multi-select Gambar + fix overlap SelectionActionBar/pill toggle
+4. [ydiv2] Verifikasi tes HP: notifikasi TTS PDF (tombol X+callback) + Audio Focus Player&TTS
+5. [BELUM ditugaskan] Dialog Properti + deteksi .zip + Kompres/Ekstrak (java.util.zip) - mandiri, aman dikerjakan kapan saja
+
+> Detail rancangan lengkap: LAPORAN-yhs13.md. Breakdown akun di bawah tetap dipakai utk tracking detail teknis.
+
 ## hz19 - Gambar
 - [SELESAI] Viewer full-screen + semua bug terkait
 - [SELESAI] Galeri grid Coil+cache, Paging3 ~23rb foto
