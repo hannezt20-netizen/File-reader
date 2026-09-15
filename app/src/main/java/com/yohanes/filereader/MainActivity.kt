@@ -257,9 +257,18 @@ class MainActivity : ComponentActivity() {
                     IconButton(onClick = { drawerScope.launch { drawerState.open() } }) {
                         Icon(Icons.Filled.Menu, contentDescription = "Menu")
                     }
+                    val selectedCategoryForLabel by homeViewModel.selectedCategory.collectAsState()
+                    val showDirektoriForLabel by homeViewModel.showDirektori.collectAsState()
+                    val activeLabel = when {
+                        showDirektoriForLabel -> "Direktori"
+                        selectedCategoryForLabel != null -> selectedCategoryForLabel!!
+                        selectedTab == com.yohanes.filereader.ui.AppTab.RECENT -> "Terakhir"
+                        else -> "Beranda"
+                    }
                     com.yohanes.filereader.ui.TabBar(
                         tabIds = tabIds,
                         activeTabId = activeTabId,
+                        activeLabel = activeLabel,
                         onTabSelected = { activeTabId = it },
                         onTabClosed = { idToClose ->
                             if (tabIds.size > 1) {

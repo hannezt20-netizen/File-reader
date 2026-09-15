@@ -208,3 +208,14 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 
 ### Fase Kerja
 - [PROSES] FileBesarScreen.kt: tambah onFileClick (tap baris buka file, pakai callback yang sama dgn kategori lain) + baris "Total: X dari N file terbesar" di atas daftar. Menunggu build+tes HP.
+
+## 2026-09-15 (lanjutan 3) - Redesain TabBar: dot utk tab non-aktif + nama kategori utk tab aktif
+
+### Kesepakatan Baru dengan User
+- Tab TIDAK lagi 2 baris terpisah (pill-tab beda baris dgn menu) - digabung JADI SATU baris: drawer, dot kecil (tab lain terbuka), lalu tab aktif tampil nama+X, dst
+- Nama tab aktif ikut kategori yang sedang dibuka tab itu (Gambar/PDF/Direktori/Terakhir/Beranda), bukan "Tab 1"/"Tab 2" generik
+- Baris ini dikonfirmasi sudah otomatis hilang saat media dibuka (arsitektur lama sudah begitu) - swipe ganti tab aman dipakai di layar jelajah karena tidak ada gestur geser lain di situ
+
+### Fase Kerja
+- [PROSES] TabBar.kt ditulis ulang: dot kecil (CircleShape kecil, tap ganti tab) utk tab non-aktif, pill nama+X utk tab aktif. MainActivity.kt: hitung activeLabel dari selectedCategory/showDirektori/selectedTab HomeViewModel, kirim ke TabBar. Menunggu build+tes HP.
+- [BELUM] Swipe utk ganti tab (baru tap dot yang jalan skrg) - menyusul kalau tap sudah dikonfirmasi lancar
