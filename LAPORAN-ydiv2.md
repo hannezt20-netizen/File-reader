@@ -88,3 +88,5 @@ Tidak ada saat ini.
 - STATUS.md "Perlu Verifikasi User": 3 dari 4 item ydiv2 (Notifikasi Audio, Audio Focus Player&TTS, Checkpoint B Playlist) SUDAH CONFIRMED semua oleh user - tinggal Multi-select hz25 yg masih pending
 - ROADMAP.md "Lirik Audio Tahap C2-C5 (ydiv2)" SUDAH TOTAL BASI - C3 (highlight+auto-scroll) sudah lama terimplementasi penuh (dicek langsung ke kode), C4/C5 (editor dalam app) sudah dibatalkan final sejak pivot ke pendekatan ala-Musicolet. Tidak ada kerjaan nyata tersisa di item ini, mohon dihapus dari ROADMAP.md
 - ROADMAP.md "Hapus tombol hamburger dari PlayerControlBar (ydiv2)" SUDAH SELESAI dari dulu (dicek grep, tidak ada sisa kode) - mohon dihapus juga
+
+- Bug lanjutan: tombol X notifikasi TTS masih tidak muncul di kartu 'Media Controls' meski sudah ditambah sbg NotificationCompat.addAction - dugaan kartu modern ini baca custom action dari level MediaSession (PlaybackStateCompat.addCustomAction), bukan dari notification action biasa (beda dari Prev/Play/Next yg memang actions standar). Fix: tambah addCustomAction di TtsPlaybackBridge.updateState() + handle onCustomAction di session callback. [PROSES - menunggu build+tes HP]

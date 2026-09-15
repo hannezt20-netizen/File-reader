@@ -41,6 +41,11 @@ class TtsPlaybackService : Service() {
             override fun onSkipToNext() { TtsPlaybackBridge.onSkipNext?.invoke() }
             override fun onSkipToPrevious() { TtsPlaybackBridge.onSkipPrev?.invoke() }
             override fun onStop() { TtsPlaybackBridge.onStop?.invoke() }
+            override fun onCustomAction(action: String, extras: android.os.Bundle?) {
+                if (action == "com.yohanes.filereader.ACTION_STOP") {
+                    TtsPlaybackBridge.onStop?.invoke()
+                }
+            }
         })
         session.isActive = true
         mediaSession = session

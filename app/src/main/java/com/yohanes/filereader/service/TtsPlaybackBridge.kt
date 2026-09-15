@@ -28,6 +28,13 @@ object TtsPlaybackBridge {
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
                         PlaybackStateCompat.ACTION_STOP
                 )
+                .addCustomAction(
+                    PlaybackStateCompat.CustomAction.Builder(
+                        "com.yohanes.filereader.ACTION_STOP",
+                        "Tutup",
+                        com.yohanes.filereader.R.drawable.ic_stop_notification
+                    ).build()
+                )
                 .setState(
                     if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
                     PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN,
