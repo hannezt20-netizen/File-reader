@@ -79,7 +79,7 @@ ATURAN WAJIB kalau sesi harus berhenti SEBELUM fase dikonfirmasi selesai (misal 
 Proses ke main sekarang dilakukan LANGSUNG oleh eksekutor sendiri - hz11 TIDAK lagi merge manual. hz11 hanya memperbarui dokumentasi (README/STATUS/ROADMAP/TODO.md) setelah user menginformasikan fase selesai.
 
 ## Repo & Environment
-- Repo: https://github.com/hannezt19/hzzip (nama folder lokal: FileReaderApp)
+- Repo: https://github.com/hannezt20-netizen/File-reader (nama folder lokal: FileReaderApp)
 - Dikerjakan sepenuhnya dari HP via Termux, tanpa Android Studio/laptop
 - Build APK release lewat GitHub Actions, sudah pakai keystore signing permanen
 - Target device utama: Motorola Moto G45 (RAM kecil)
