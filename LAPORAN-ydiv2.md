@@ -1,92 +1,33 @@
 # Laporan Kerja - ydiv2
-
-**Update terakhir:** 8 September 2026
-
-**Area yang dipegang:** PDF Text-to-Speech (kontrol notifikasi/lock screen), Audio Player (implementasi + redesain UI + playlist + lirik)
+**Area:** PDF Text-to-Speech (kontrol notifikasi/lock screen), Audio Player (implementasi + UI + playlist + lirik)
+> Format: entri terbaru di atas, ringkas per pencapaian, disimpan maks ~10 entri terakhir.
 
 ---
 
-## ⛔ Perlu Perhatian / Blocker
-
+## Perlu Perhatian / Blocker
 Tidak ada saat ini.
 
----
+## Log Pencapaian (terbaru di atas)
 
-## Rencana Kerja & Fase Saat Ini
+**15 Sept** - Audit lintas-akun (README/STATUS/ROADMAP/TODO/laporan semua akun + git log): ditemukan beberapa dokumen acuan hz11 basi (TODO poin Android/data & T1 hz25 sudah commit selesai; diagnosis awal yhs13 soal Android/data sudah dikoreksi hz25 jadi "pembatasan sistem Android 11+"; ROADMAP Lirik C2-C5 & hapus tombol hamburger PlayerControlBar total basi). Catatan disisipkan ke laporan ini, tidak dibuat file terpisah (hemat kuota Actions).
 
-**PDF - Text-to-Speech**
-`Tombol close bar TTS` [SELESAI] → `Kontrol notifikasi/lock screen` [SELESAI]
+**15 Sept** - Bug tombol X notifikasi TTS: **SELESAI & terkonfirmasi.** Root cause: kartu "Media Controls" modern baca custom action dari level MediaSession (`PlaybackStateCompat.addCustomAction`), bukan dari notification action biasa seperti Prev/Play/Next. Fix: tambah `addCustomAction` di `TtsPlaybackBridge.updateState()` + handle `onCustomAction` di session callback.
 
-**Audio Player**
-`Implementasi dasar` [SELESAI] → `Tahap A - Redesain UI neumorphism` [SELESAI, terkonfirmasi] → `Tahap B - Playlist custom (tabel Room + tambah/hapus lagu)` [SELESAI, terkonfirmasi] → `Tahap C1 - Rombak jadi 3 halaman (Playlist|Pemutar|Lirik) via swipe` [SELESAI, terkonfirmasi] → `Tahap C2 - Penyimpanan lirik privat + parser .lrc` [BELUM MULAI] → `Tahap C3 - Highlight lirik sinkron` [BELUM MULAI] → `Tahap C4 - Editor lirik mode Sederhana` [BELUM MULAI] → `Tahap C5 - Editor lirik mode Disinkronkan (tap-waktu sambil dengar)` [BELUM MULAI]
+**SELESAI** - TtsPlaybackService (statusbar+lock screen TTS) didaftarkan ke manifest & disambungkan penuh ke PdfViewerScreen (sebelumnya kode ada tapi tidak pernah dipanggil). 3 tombol nav fix (`MediaSessionCompat.Callback` dipasang).
 
-**Tugas kecil tertunda:** hapus tombol ☰ dari bar kontrol (jadi berlebihan sejak navigasi utama pindah ke swipe kiri/kanan antar halaman) - sederhanakan jadi 3 tombol (prev-play-next) di tengah tanpa trik tata letak tambahan.
+**SELESAI** - Audio Focus: TTS (`TtsHelper`) & Audio Player (`AudioPlayerService`) sama-sama request/abandon audio focus dengan benar - gantian normal dgn app musik lain (Musicolet) dikonfirmasi.
 
----
+**SELESAI** - Notifikasi Audio dirombak: non-dismissable, tombol X (stop), tap badan buka ke Pemutar.
 
-## Log Pencapaian
+**SELESAI** - Checkpoint B Playlist: thumbnail cover album, judul asli (tag TIT2), menu "..." (Info lagu/Hapus-Tambah Playlist/Bagikan via FileProvider).
 
-### 8 September 2026
-- **Audio Player - Tahap B (Playlist custom) SELESAI & terkonfirmasi.** Tabel Room baru: `PlaylistEntity` (path unik + urutan) + `PlaylistDao`. Migration `AppDatabase` v1→v2 (aman, tidak menghapus data user yang sudah ada). Awalnya diimplementasi sebagai bottom sheet dari bawah (sesuai `ROADMAP.md`), tapi user uji-coba langsung dan menilai kurang nyaman diakses dari bawah.
-  - Commit: `[ydiv2] Tahap B1: tabel Room Playlist baru...`, `[ydiv2] Tahap B2: panel Playlist bottom sheet 2 tab...`, `[ydiv2] fix: tambah import clickable yang kelewat...`
-- **Audio Player - Tahap C1 (navigasi 3 halaman via swipe) SELESAI & terkonfirmasi.** Setelah diskusi ulang, bottom sheet Playlist diganti total jadi **HorizontalPager 3 halaman**: **Playlist ← Pemutar → Lirik**. Masuk dari Beranda/file tetap langsung ke halaman Pemutar (tengah, `initialPage = 1`) - TIDAK berubah dari kesepakatan awal. Geser kiri = Playlist, geser kanan = Lirik (placeholder, isi sesungguhnya nyusul Tahap C2/C3). Bar kontrol (seekbar + tombol) dijadikan komponen reusable (`PlayerControlBar`, `SeekBarSection`) dan tampil konsisten di ketiga halaman - permintaan user supaya kontrol tetap bisa diakses dari halaman mana pun, termasuk saat baca lirik.
-  - **Keputusan yang menyimpang dari `ROADMAP.md`:** navigasi Playlist BUKAN lagi bottom sheet gaya Spotify, tapi HorizontalPager (alasan: bottom sheet kurang nyaman diakses menurut user + konsisten dengan pola HorizontalPager yang sudah dipakai di PDF/galeri Gambar + menghindari konflik gestur dengan drawer navigasi utama app yang sudah sengaja mematikan gestur dari tepi, per catatan `STATUS.md`).
-  - Commit: `[ydiv2] Tahap C1: rombak AudioPlayerScreen jadi HorizontalPager 3 halaman...`
-- **Rencana Lirik (Tahap C, disepakati lewat diskusi panjang bareng user):**
-  - Sumber data: file `.lrc` (format `[mm:ss.ms] teks`) untuk lirik BERSINKRON dengan highlight berjalan.
-  - **Disimpan di penyimpanan privat khusus app** (bukan folder publik) - alasan: tidak ikut ke-scan `FileScanner`/Beranda, tidak berisiko terhapus app pembersih, dikunci pakai path lagu (bukan nama file) supaya tidak ketuker walau ada nama lagu kembar di folder beda.
-  - **Mekanisme bersih-otomatis**: menumpang di `FileDao.syncAll()` yang sudah ada - begitu sebuah lagu terdeteksi hilang dari HP, data lirik terkait ikut dihapus di siklus scan yang sama (tidak perlu proses/jadwal terpisah).
-  - **Fitur bikin lirik sendiri** (terinspirasi Musicolet, user kirim referensi screenshot): editor 2 mode - "Sederhana" (ketik polos tanpa waktu) dan "Disinkronkan" (tap tombol jam per baris sambil lagu diputar via mini transport play/mundur/maju, waktu tercatat otomatis) - hasil akhir digenerate jadi `.lrc` yang sama formatnya, disimpan ke folder privat.
-  - Rincian sub-tahap (C2-C5) lihat tabel fase di atas.
+**SELESAI** - Checkpoint A Lirik: `Id3UsltReader` digeneralisasi + `readTitle()`, `LyricsStore` dirombak total ke sumber tag USLT tertanam (bukan file .lrc privat spt rencana awal) - deteksi otomatis pola `[mm:ss.ss]` di dalamnya (ala Musicolet).
 
----
+**SELESAI** - Fix bug: judul & lagu tidak sinkron di tab Playlist (index geser krn `mapNotNull` buang path hilang sebelum index dihitung - fix filter dulu baru hitung index).
+
+**SELESAI** - Tahap C1: navigasi Audio Player dirombak jadi `HorizontalPager` 3 halaman (Playlist-Pemutar-Lirik), menyimpang dari rencana awal "bottom sheet Spotify" di ROADMAP (alasan: kurang nyaman diakses + hindari konflik gestur drawer).
+
+**Riwayat lebih lama (ringkas):** Tahap B playlist Room, Tahap A redesain UI neumorphism, implementasi dasar Audio Player, tombol close bar TTS - semua SELESAI & terkonfirmasi lama.
 
 ## Rencana Selanjutnya
-
-1. Hapus tombol ☰ dari `PlayerControlBar` (redundant, navigasi sudah lewat swipe) - tugas kecil, dikerjakan duluan sebelum lanjut C2.
-2. **Tahap C2**: penyimpanan lirik privat (kunci dari path lagu) + hook pembersihan otomatis di `syncAll()` + parser `.lrc` + tampilan dasar halaman Lirik (list baris statis, atau "Lirik tidak tersedia").
-3. **Tahap C3**: highlight baris berjalan + auto-scroll sinkron posisi lagu.
-4. **Tahap C4**: editor lirik mode Sederhana.
-5. **Tahap C5**: editor lirik mode Disinkronkan (tap-waktu sambil dengar, mini transport player).
-
-## Update terakhir: Checkpoint A - Tahap C Lirik & Judul Asli
-- [PROSES] Id3UsltReader.kt digeneralisasi + tambah readTitle() (frame TIT2)
-- [PROSES] LyricsStore.kt dirombak total - TIDAK PAKAI file .lrc privat lagi, sumber lirik murni dari tag USLT tertanam, deteksi otomatis pola [mm:ss.ss] di dalam teksnya (ala Musicolet)
-- [PROSES] Info: item URGENT build 'clickable' di TODO.md (8 Sept) SUDAH BASI - dicek ydiv2, import ada, gh run list nunjukkin 5 build terakhir main semua sukses. Mohon dihapus dari TODO.md.
-- [BELUM] Checkpoint B: UI PlaylistPage (thumbnail cover album + menu ... 4 opsi: Info lagu/Hapus/Tambah/Bagikan) + pakai readTitle() sebagai judul utama
-
-## Update terakhir: Checkpoint B - UI Playlist (thumbnail + judul asli + menu opsi)
-- [PROSES] PlaylistPage: tambah thumbnail kotak (reuse loadAlbumArt/albumArtCache), judul pakai resolveTitle() (tag TIT2, fallback cleanTitle), menu "..." 3 opsi (Info lagu/Hapus-Tambah Playlist/Bagikan pakai FileProvider yang sudah dikonfigurasi)
-- [BELUM] Testing manual di HP (thumbnail muncul, judul asli kebaca, share jalan tanpa crash)
-
-## Fix bug: judul & lagu tidak sinkron di tab Playlist
-- [SELESAI] playFromCustomPlaylist(): startIndex dulu dihitung dari customPlaylistEntries MENTAH, sementara mediaItems dibuang (mapNotNull) kalau file sudah tidak ketemu di fileByPath - bikin index geser & judul/lagu tidak sinkron begitu ada 1 entry "yatim" (path tercatat di playlist tapi file sudah dipindah/hilang). Fix: filter dulu baru hitung ulang index dari list yang sudah valid.
-
-- Notifikasi Audio dirombak: non-dismissable (tidak bisa swipe) kapan pun, tombol X (custom command STOP) untuk tutup/stop, tap badan notifikasi buka ke Pemutar dengan lagu yang sedang main. [PROSES - belum dites di HP]
-
-- Notifikasi Audio dirombak: non-dismissable (tidak bisa swipe) kapan pun via override addNotificationActions+setOngoing, tombol X (custom command STOP) untuk tutup/stop, tap badan notifikasi buka ke Pemutar dengan lagu yang sedang main. Percobaan pertama gagal build (createNotification final), sudah diperbaiki. [PROSES - belum dites di HP]
-
-- Fix build kedua: import salah androidx.media3.ui.NotificationCompat (tidak ada) dihapus, tidak pernah dipakai karena signature sudah pakai nama lengkap androidx.core.app.NotificationCompat.Builder. [PROSES - menunggu build hijau]
-
-- Bug ditemukan+fix: AudioPlayerService tidak pernah request Audio Focus (ExoPlayer dibuat tanpa AudioAttributes), jadi bisa main bersamaan dengan app musik lain (mis. Musicolet) tanpa saling pause. Fix: setAudioAttributes(..., handleAudioFocus=true) saat build ExoPlayer. [PROSES - menunggu build+tes HP]
-
-- Bug ditemukan+fix (mirip kasus Audio Player): TTS PDF (TtsHelper, pakai TextToSpeech biasa) tidak pernah request Audio Focus, jadi bisa main bersamaan dgn app musik lain tanpa gantian. Fix: requestAudioFocus() saat speak(), abandonAudioFocus() saat stop(), auto-stop+callback onAudioFocusLost ke PdfViewerScreen (set ttsPlaying=false) kalau focus direbut app lain. [PROSES - menunggu build+tes HP]
-
-- Ditemukan: TtsPlaybackService (notifikasi/lock-screen TTS ala Spotify) sudah ada kodenya dari awal TAPI tidak pernah didaftarkan di AndroidManifest.xml dan tidak pernah dipanggil/disambungkan dari PdfViewerScreen - jadi tidak pernah muncul di statusbar. Fix: daftarkan service di manifest, start/stop foreground service mengikuti ttsActive, sambungkan TtsPlaybackBridge (onPlayPause/onSkipNext/onSkipPrev/onStop) ke logic TTS yang ada, updateState() tiap ttsPlaying berubah, stop service saat keluar layar PDF. [PROSES - menunggu build+tes HP]
-
-- Ditemukan: TtsPlaybackService (notifikasi/lock-screen TTS ala Spotify) sudah ada kodenya dari awal TAPI tidak pernah didaftarkan di AndroidManifest.xml dan tidak pernah dipanggil/disambungkan dari PdfViewerScreen - jadi tidak pernah muncul di statusbar. Fix: daftarkan service di manifest, start/stop foreground service mengikuti ttsActive, sambungkan TtsPlaybackBridge (onPlayPause/onSkipNext/onSkipPrev/onStop) ke logic TTS yang ada, updateState() tiap ttsPlaying berubah, stop service saat keluar layar PDF. [PROSES - menunggu tes HP]
-
-- Bug fix: 3 tombol notifikasi TTS tidak berfungsi - akar masalah MediaSessionCompat.Callback tidak pernah dipasang, jadi sistem (kartu Media Controls) manggil callback kosong bukan PendingIntent kita. Fix: session.setCallback() diisi, forward ke TtsPlaybackBridge. Toast debug dibersihkan. [PROSES - menunggu tes HP]
-
-- Bug fix: notifikasi TTS belum punya tombol X (cuma bisa 'mental balik' pas di-swipe, tidak hilang/stop). Fix: setOngoing selalu true (samakan pola dgn Audio Player), tambah tombol X sbg aksi ke-4 (reuse ic_stop_notification, logic ACTION_STOP sudah ada dari awal, tinggal dipasang tombolnya). [PROSES - menunggu tes HP]
-
-- Bug fix: notifikasi TTS belum ada tombol X (swipe cuma 'mental balik', bukan stop). Fix: setOngoing selalu true (samakan pola Audio Player) + tombol X sbg aksi ke-4 (reuse ic_stop_notification, ACTION_STOP sudah ada dari awal). SELESAI & terkonfirmasi build.
-
-## Catatan untuk hz11 (hasil audit lintas-akun, 15 Sept, sekalian numpang commit)
-- TODO.md poin 1&2 (Android/data + T1 hz25) SUDAH SELESAI di commit 7c88e23 & b34b86c - TODO.md belum di-refresh
-- LAPORAN-yhs13.md bagian A (root cause Android/data) SUDAH DIKOREKSI hz25 (7c88e23): bukan bug DB-vs-live, tapi pembatasan sistem Android 11+ (bukan bisa difix, cuma pesan jujur ke user)
-- STATUS.md "Perlu Verifikasi User": 3 dari 4 item ydiv2 (Notifikasi Audio, Audio Focus Player&TTS, Checkpoint B Playlist) SUDAH CONFIRMED semua oleh user - tinggal Multi-select hz25 yg masih pending
-- ROADMAP.md "Lirik Audio Tahap C2-C5 (ydiv2)" SUDAH TOTAL BASI - C3 (highlight+auto-scroll) sudah lama terimplementasi penuh (dicek langsung ke kode), C4/C5 (editor dalam app) sudah dibatalkan final sejak pivot ke pendekatan ala-Musicolet. Tidak ada kerjaan nyata tersisa di item ini, mohon dihapus dari ROADMAP.md
-- ROADMAP.md "Hapus tombol hamburger dari PlayerControlBar (ydiv2)" SUDAH SELESAI dari dulu (dicek grep, tidak ada sisa kode) - mohon dihapus juga
-
-- Bug lanjutan: tombol X notifikasi TTS masih tidak muncul di kartu 'Media Controls' meski sudah ditambah sbg NotificationCompat.addAction - dugaan kartu modern ini baca custom action dari level MediaSession (PlaybackStateCompat.addCustomAction), bukan dari notification action biasa (beda dari Prev/Play/Next yg memang actions standar). Fix: tambah addCustomAction di TtsPlaybackBridge.updateState() + handle onCustomAction di session callback. [PROSES - menunggu build+tes HP]
+Diskusi fitur baru (belum dipatch): TTS highlight per KALIMAT di Mode Baca PDF - `ReflowPage` dapat parameter `activeSentenceIndex: Int?`, composable baru `HighlightedSentences`, auto-scroll via `BringIntoViewRequester`. `formatReadableText()` dikonfirmasi sama persis dgn yang dipakai TTS jadi index dijamin sinkron.
