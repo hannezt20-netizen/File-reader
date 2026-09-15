@@ -190,3 +190,7 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 
 ### Rencana Kerja & File Terkait (aktif)
 - ui/analisis/AnalisisScreenScaffold.kt, ui/beranda/BerandaScreenScaffold.kt, ui/direktori/DirektoriScreenScaffold.kt - scaffold murni, langkah selanjutnya sambungkan data asli & ganti HomeScreen.kt punya lama
+
+## 2026-09-15 (lanjutan) - Fix bug build BerandaScreenScaffold.kt
+
+[BUG AKTIF] Build gagal - Unresolved reference: clip di BerandaScreenScaffold.kt baris 57, 120, 150. Penyebab: lupa import androidx.compose.ui.draw.clip (ada di 2 file scaffold lain tapi kelewat di file ini). Diperbaiki di commit yang sama.
