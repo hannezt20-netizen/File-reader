@@ -78,7 +78,7 @@ fun HomeScreen(
             onFileLongClick = onFileLongClick,
             onBack = { viewModel.closeDirektori() }
         )
-        showFileBesar -> FileBesarScreen()
+        showFileBesar -> FileBesarScreen(onFileClick = onFileClick)
         showAnalisis -> {
             val analisisViewModel: AnalisisViewModel = viewModel()
             val fileTerbesar by analisisViewModel.fileTerbesar.collectAsState()

@@ -203,3 +203,8 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 ### Rencana Kerja & File Terkait (aktif)
 - HomeScreen.kt: showFileBesar state baru, BackHandler bertingkat (FileBesar > Analisis > kategori)
 - Langkah selanjutnya: bangun query "Garis Besar" (rekap ukuran per kategori) & "Semua Partisi" asli, baru sambung Beranda baru
+
+## 2026-09-15 (lanjutan 2) - Fix: File Besar - tap buka file + total ukuran
+
+### Fase Kerja
+- [PROSES] FileBesarScreen.kt: tambah onFileClick (tap baris buka file, pakai callback yang sama dgn kategori lain) + baris "Total: X dari N file terbesar" di atas daftar. Menunggu build+tes HP.
