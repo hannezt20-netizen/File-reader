@@ -36,6 +36,9 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
+private var tabIdCounter = 0
+private fun nextTabId(): String = "tab_${tabIdCounter++}"
+
 class MainActivity : ComponentActivity() {
 
     // State dipegang di luar Compose supaya gampang diakses dari launcher/onNewIntent
@@ -174,8 +177,10 @@ class MainActivity : ComponentActivity() {
             }
         }
         if (uri == null) {
-            var selectedTab by remember { mutableStateOf(com.yohanes.filereader.ui.AppTab.HOME) }
-            val homeViewModel: HomeViewModel = viewModel()
+            val tabIds = remember { mutableStateListOf(nextTabId()) }
+            var activeTabId by remember { mutableStateOf(tabIds.first()) }
+            val homeViewModel: HomeViewModel = viewModel(key = activeTabId)
+            val selectedTab by homeViewModel.selectedTab.collectAsState()
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val drawerScope = rememberCoroutineScope()
             ModalNavigationDrawer(
@@ -189,21 +194,21 @@ class MainActivity : ComponentActivity() {
                             onBeranda = {
                                 homeViewModel.onCategorySelected(null)
                                 homeViewModel.closeDirektori()
-                                selectedTab = com.yohanes.filereader.ui.AppTab.HOME
+                                homeViewModel.selectTab(com.yohanes.filereader.ui.AppTab.HOME)
                                 drawerScope.launch { drawerState.close() }
                             },
                             onTerakhir = {
-                                selectedTab = com.yohanes.filereader.ui.AppTab.RECENT
+                                homeViewModel.selectTab(com.yohanes.filereader.ui.AppTab.RECENT)
                                 drawerScope.launch { drawerState.close() }
                             },
                             onDirektori = {
                                 homeViewModel.openDirektori()
-                                selectedTab = com.yohanes.filereader.ui.AppTab.HOME
+                                homeViewModel.selectTab(com.yohanes.filereader.ui.AppTab.HOME)
                                 drawerScope.launch { drawerState.close() }
                             },
                             onFavorit = {
                                 homeViewModel.onCategorySelected("Favorit")
-                                selectedTab = com.yohanes.filereader.ui.AppTab.HOME
+                                homeViewModel.selectTab(com.yohanes.filereader.ui.AppTab.HOME)
                                 drawerScope.launch { drawerState.close() }
                             },
                         )
@@ -239,11 +244,35 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-                IconButton(
-                    onClick = { drawerScope.launch { drawerState.open() } },
-                    modifier = Modifier.statusBarsPadding().padding(4.dp)
+                Row(
+                    modifier = Modifier.statusBarsPadding().fillMaxWidth().padding(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                    IconButton(onClick = { drawerScope.launch { drawerState.open() } }) {
+                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                    }
+                    com.yohanes.filereader.ui.TabBar(
+                        tabIds = tabIds,
+                        activeTabId = activeTabId,
+                        onTabSelected = { activeTabId = it },
+                        onTabClosed = { idToClose ->
+                            if (tabIds.size > 1) {
+                                val idx = tabIds.indexOf(idToClose)
+                                tabIds.remove(idToClose)
+                                if (activeTabId == idToClose) {
+                                    val newIdx = (idx - 1).coerceAtLeast(0).coerceAtMost(tabIds.size - 1)
+                                    activeTabId = tabIds[newIdx]
+                                }
+                            }
+                        },
+                        onNewTab = {
+                            if (tabIds.size < 4) {
+                                val id = nextTabId()
+                                tabIds.add(id)
+                                activeTabId = id
+                            }
+                        }
+                    )
                 }
             }
             }

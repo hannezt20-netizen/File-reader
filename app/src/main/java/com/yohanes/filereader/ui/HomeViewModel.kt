@@ -428,5 +428,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val currentDir: StateFlow<java.io.File> = _currentDir
     fun setCurrentDir(dir: java.io.File) { _currentDir.value = dir }
 
+    // T2 multi-tab: tab aktif (Beranda-kategori vs Terakhir) - per-tab juga,
+    // konsisten dgn selectedCategory/showDirektori/currentDir yang sudah di sini.
+    private val _selectedTab = MutableStateFlow(AppTab.HOME)
+    val selectedTab: StateFlow<AppTab> = _selectedTab
+    fun selectTab(tab: AppTab) { _selectedTab.value = tab }
+
     fun refreshScan() = ScanManager.refreshScan()
 }
