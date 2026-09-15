@@ -297,6 +297,17 @@ private fun DirektoriScreen(
             .sortedWith(compareByDescending<java.io.File> { it.isDirectory }.thenBy { it.name.lowercase() })
     }
 
+    // Android 11+ mengunci folder Android/data & Android/obb milik app LAIN di level sistem
+    // (FUSE) - berlaku untuk SEMUA app pihak ketiga termasuk file manager dengan izin All Files
+    // Access sekalipun, dan tidak bisa diakal-akali lewat baca live vs database. Folder milik app
+    // KITA SENDIRI (com.yohanes.filereader) tetap boleh diakses normal.
+    val isRestrictedSystemFolder = remember(currentDir) {
+        val path = currentDir.path
+        val isAndroidDataOrObb = path.contains("/Android/data") || path.contains("/Android/obb")
+        val isOwnAppFolder = path.contains("/Android/data/com.yohanes.filereader")
+        isAndroidDataOrObb && !isOwnAppFolder && entries.isEmpty()
+    }
+
     val clipboardState by FileClipboard.state.collectAsState()
     val scope = rememberCoroutineScope()
     val selectedFileEntities = remember(entries, selectedPaths) {
@@ -350,7 +361,24 @@ private fun DirektoriScreen(
             }
         }
 
-        if (entries.isEmpty()) {
+        if (isRestrictedSystemFolder) {
+            Box(Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Dibatasi sistem Android",
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Sejak Android 11, folder ini tidak bisa diakses aplikasi manapun demi keamanan - termasuk aplikasi dengan izin akses semua file.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+            }
+        } else if (entries.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("Folder kosong")
             }
