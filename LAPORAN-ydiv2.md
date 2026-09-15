@@ -79,3 +79,12 @@ Tidak ada saat ini.
 - Bug fix: 3 tombol notifikasi TTS tidak berfungsi - akar masalah MediaSessionCompat.Callback tidak pernah dipasang, jadi sistem (kartu Media Controls) manggil callback kosong bukan PendingIntent kita. Fix: session.setCallback() diisi, forward ke TtsPlaybackBridge. Toast debug dibersihkan. [PROSES - menunggu tes HP]
 
 - Bug fix: notifikasi TTS belum punya tombol X (cuma bisa 'mental balik' pas di-swipe, tidak hilang/stop). Fix: setOngoing selalu true (samakan pola dgn Audio Player), tambah tombol X sbg aksi ke-4 (reuse ic_stop_notification, logic ACTION_STOP sudah ada dari awal, tinggal dipasang tombolnya). [PROSES - menunggu tes HP]
+
+- Bug fix: notifikasi TTS belum ada tombol X (swipe cuma 'mental balik', bukan stop). Fix: setOngoing selalu true (samakan pola Audio Player) + tombol X sbg aksi ke-4 (reuse ic_stop_notification, ACTION_STOP sudah ada dari awal). SELESAI & terkonfirmasi build.
+
+## Catatan untuk hz11 (hasil audit lintas-akun, 15 Sept, sekalian numpang commit)
+- TODO.md poin 1&2 (Android/data + T1 hz25) SUDAH SELESAI di commit 7c88e23 & b34b86c - TODO.md belum di-refresh
+- LAPORAN-yhs13.md bagian A (root cause Android/data) SUDAH DIKOREKSI hz25 (7c88e23): bukan bug DB-vs-live, tapi pembatasan sistem Android 11+ (bukan bisa difix, cuma pesan jujur ke user)
+- STATUS.md "Perlu Verifikasi User": 3 dari 4 item ydiv2 (Notifikasi Audio, Audio Focus Player&TTS, Checkpoint B Playlist) SUDAH CONFIRMED semua oleh user - tinggal Multi-select hz25 yg masih pending
+- ROADMAP.md "Lirik Audio Tahap C2-C5 (ydiv2)" SUDAH TOTAL BASI - C3 (highlight+auto-scroll) sudah lama terimplementasi penuh (dicek langsung ke kode), C4/C5 (editor dalam app) sudah dibatalkan final sejak pivot ke pendekatan ala-Musicolet. Tidak ada kerjaan nyata tersisa di item ini, mohon dihapus dari ROADMAP.md
+- ROADMAP.md "Hapus tombol hamburger dari PlayerControlBar (ydiv2)" SUDAH SELESAI dari dulu (dicek grep, tidak ada sisa kode) - mohon dihapus juga
