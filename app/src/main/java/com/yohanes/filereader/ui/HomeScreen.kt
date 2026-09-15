@@ -212,23 +212,18 @@ private fun CategoryHomeScreen(
                     Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        StorageCard(viewModel.storageInfo, modifier = Modifier.weight(1f), onClick = onDirektoriClick)
-                        AnalisisCard(modifier = Modifier.weight(1f), onClick = onAnalisisClick)
-                    }
-                    CATEGORY_LIST.chunked(3).forEach { rowItems ->
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            rowItems.forEach { cat ->
-                                CategoryCircleCard(cat, counts[cat] ?: 0) { onCategoryClick(cat) }
-                            }
-                        }
-                    }
+                    val storageInfoBaru = viewModel.storageInfo
+                    val persenTerpakaiBaru = if (storageInfoBaru.totalBytes > 0)
+                        ((storageInfoBaru.usedBytes * 100) / storageInfoBaru.totalBytes).toInt() else 0
+                    com.yohanes.filereader.ui.beranda.StorageAnalisisRow(
+                        persenTerpakai = persenTerpakaiBaru,
+                        labelStorage = formatSize(storageInfoBaru.usedBytes) + "/" + formatSize(storageInfoBaru.totalBytes),
+                        onStorageClick = onDirektoriClick,
+                        onAnalisisClick = onAnalisisClick,
+                    )
+                    com.yohanes.filereader.ui.beranda.KategoriGrid(
+                        onKategoriClick = { kat -> onCategoryClick(kat.label) }
+                    )
                 }
             }
         }
