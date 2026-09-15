@@ -272,7 +272,7 @@ private fun DirektoriScreen(
     onBack: () -> Unit
 ) {
     val rootPath = android.os.Environment.getExternalStorageDirectory().path
-    var currentDir by remember { mutableStateOf(java.io.File(rootPath)) }
+    val currentDir by viewModel.currentDir.collectAsState()
     val selectedPaths by viewModel.selectedPaths.collectAsState()
     val isSelectionMode by viewModel.isSelectionMode.collectAsState()
 
@@ -283,7 +283,7 @@ private fun DirektoriScreen(
         }
         val parent = currentDir.parentFile
         if (currentDir.path != rootPath && parent != null) {
-            currentDir = parent
+            viewModel.setCurrentDir(parent)
         } else {
             onBack()
         }
@@ -331,7 +331,7 @@ private fun DirektoriScreen(
         ) {
             IconButton(onClick = {
                 val parent = currentDir.parentFile
-                if (currentDir.path != rootPath && parent != null) currentDir = parent else onBack()
+                if (currentDir.path != rootPath && parent != null) viewModel.setCurrentDir(parent) else onBack()
             }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
             }
@@ -352,7 +352,7 @@ private fun DirektoriScreen(
                     modifier = Modifier.clickable {
                         val target = if (index == 0) rootPath
                             else rootPath + "/" + segments.drop(1).take(index).joinToString("/")
-                        currentDir = java.io.File(target)
+                        viewModel.setCurrentDir(java.io.File(target))
                     }
                 )
                 if (index != segments.lastIndex) {
@@ -388,7 +388,7 @@ private fun DirektoriScreen(
                     if (entry.isDirectory) {
                         Row(
                             Modifier.fillMaxWidth()
-                                .clickable { currentDir = entry }
+                                .clickable { viewModel.setCurrentDir(entry) }
                                 .padding(16.dp, 12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {

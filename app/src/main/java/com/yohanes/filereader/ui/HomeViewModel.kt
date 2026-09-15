@@ -15,6 +15,7 @@ import com.yohanes.filereader.data.AppDatabase
 import com.yohanes.filereader.data.FileEntity
 import com.yohanes.filereader.data.FavoritesStore
 import com.yohanes.filereader.data.FileScanner
+import com.yohanes.filereader.data.ScanManager
 import com.yohanes.filereader.data.DayCount
 import com.yohanes.filereader.data.MonthCount
 import com.yohanes.filereader.data.YearCount
@@ -110,8 +111,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _sortOption = MutableStateFlow(SortOption.DATE_NEWEST)
     val sortOption: StateFlow<SortOption> = _sortOption
 
-    private val _isScanning = MutableStateFlow(false)
-    val isScanning: StateFlow<Boolean> = _isScanning
+    val isScanning: StateFlow<Boolean> = ScanManager.isScanning
 
     val storageInfo: StorageInfo = getStorageInfo()
 
@@ -354,11 +354,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun openActionSheet(file: FileEntity) { _actionSheetFile.value = file }
     fun closeActionSheet() { _actionSheetFile.value = null }
 
-    // Penanda "ada perubahan file dari luar Room" (hapus/rename/tempel manual di Direktori),
-    // dipakai DirektoriScreen untuk tahu kapan perlu baca ulang java.io.File.listFiles().
-    private val _fileOpsTick = MutableStateFlow(0)
-    val fileOpsTick: StateFlow<Int> = _fileOpsTick
-    fun notifyFileOpsChanged() { _fileOpsTick.value++ }
+    // Penanda "ada perubahan file dari luar Room" - dipindah jadi objek global ScanManager
+    // (T1 fondasi multi-tab) supaya semua tab nanti berbagi 1 sumber kebenaran.
+    val fileOpsTick: StateFlow<Int> = ScanManager.fileOpsTick
+    fun notifyFileOpsChanged() = ScanManager.notifyFileOpsChanged()
 
     // Hapus file fisik dari storage, baru hapus datanya dari database kalau berhasil.
     fun deleteFile(file: FileEntity) {
@@ -386,16 +385,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private val scanPrefs = application.getSharedPreferences("home_scan_prefs", android.content.Context.MODE_PRIVATE)
-
     init {
         FavoritesStore.init(application)
         com.yohanes.filereader.data.LastPlayedStore.init(application)
-        val lastScan = scanPrefs.getLong(KEY_LAST_SCAN, 0L)
-        val elapsed = System.currentTimeMillis() - lastScan
-        if (elapsed > SCAN_INTERVAL_MS) {
-            refreshScan()
-        }
+        ScanManager.init(application)
     }
 
     fun onSearchQueryChange(query: String) {
@@ -428,22 +421,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun openDirektori() { _showDirektori.value = true }
     fun closeDirektori() { _showDirektori.value = false }
 
-    fun refreshScan() {
-        viewModelScope.launch {
-            _isScanning.value = true
-            val results = withContext(Dispatchers.IO) {
-                FileScanner.scanAll()
-            }
-            withContext(Dispatchers.IO) {
-                dao.syncAll(results)
-            }
-            scanPrefs.edit().putLong(KEY_LAST_SCAN, System.currentTimeMillis()).apply()
-            _isScanning.value = false
-        }
-    }
+    // T1 fondasi multi-tab: currentDir Direktori dinaikkan ke sini (dari remember lokal)
+    // supaya tidak reset saat composable dilepas total, dan nanti tiap tab (viewModel(key=tabId))
+    // otomatis punya posisi folder sendiri-sendiri tanpa kerja tambahan.
+    private val _currentDir = MutableStateFlow(java.io.File(android.os.Environment.getExternalStorageDirectory().path))
+    val currentDir: StateFlow<java.io.File> = _currentDir
+    fun setCurrentDir(dir: java.io.File) { _currentDir.value = dir }
 
-    companion object {
-        private const val KEY_LAST_SCAN = "last_scan_timestamp"
-        private const val SCAN_INTERVAL_MS = 10 * 60 * 1000L
-    }
+    fun refreshScan() = ScanManager.refreshScan()
 }
