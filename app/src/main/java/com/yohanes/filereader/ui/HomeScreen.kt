@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.yohanes.filereader.data.ClipboardOp
 import com.yohanes.filereader.data.FileClipboard
 import com.yohanes.filereader.data.FileEntity
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentPaste
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
@@ -454,50 +455,70 @@ private fun DirektoriScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-                .padding(bottom = 16.dp)
-                .clip(RoundedCornerShape(50))
-                .background(MaterialTheme.colorScheme.primary)
-                .clickable {
-                    if (cbFiles.isNotEmpty() && cbOp != null) {
-                        scope.launch {
-                            val anySuccess = withContext(Dispatchers.IO) {
-                                var success = false
-                                cbFiles.forEach { cbFile ->
-                                    try {
-                                        val sourceFile = java.io.File(cbFile.path)
-                                        val destFile = uniqueDestFile(currentDir, sourceFile.name)
-                                        when (cbOp) {
-                                            ClipboardOp.COPY -> {
-                                                sourceFile.copyTo(destFile)
-                                                success = true
-                                            }
-                                            ClipboardOp.CUT -> {
-                                                if (sourceFile.renameTo(destFile)) {
-                                                    success = true
-                                                } else {
-                                                    sourceFile.copyTo(destFile)
-                                                    sourceFile.delete()
-                                                    success = true
-                                                }
-                                            }
-                                        }
-                                    } catch (e: Exception) {
-                                        // lanjut ke file berikutnya walau satu gagal
-                                    }
-                                }
-                                success
-                            }
-                            FileClipboard.clear()
-                            if (anySuccess) viewModel.notifyFileOpsChanged()
-                        }
-                    }
-                }
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Filled.ContentPaste, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
-            Spacer(Modifier.width(8.dp))
-            Text(if (cbFiles.size > 1) "Tempel (${cbFiles.size})" else "Tempel", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.labelLarge)
+            // T3 (15 Sept 2026): tombol Bersihkan - batalkan clipboard tanpa menempel,
+            // sesuai mockup 2-tombol (Bersihkan/Tempel) yang diminta user.
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .clickable { FileClipboard.clear() }
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Filled.Close, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(Modifier.width(8.dp))
+                Text("Bersihkan", color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+            }
+            Spacer(Modifier.width(12.dp))
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .clickable {
+                        if (cbFiles.isNotEmpty() && cbOp != null) {
+                            scope.launch {
+                                val anySuccess = withContext(Dispatchers.IO) {
+                                    var success = false
+                                    cbFiles.forEach { cbFile ->
+                                        try {
+                                            val sourceFile = java.io.File(cbFile.path)
+                                            val destFile = uniqueDestFile(currentDir, sourceFile.name)
+                                            when (cbOp) {
+                                                ClipboardOp.COPY -> {
+                                                    sourceFile.copyTo(destFile)
+                                                    success = true
+                                                }
+                                                ClipboardOp.CUT -> {
+                                                    if (sourceFile.renameTo(destFile)) {
+                                                        success = true
+                                                    } else {
+                                                        sourceFile.copyTo(destFile)
+                                                        sourceFile.delete()
+                                                        success = true
+                                                    }
+                                                }
+                                            }
+                                        } catch (e: Exception) {
+                                            // lanjut ke file berikutnya walau satu gagal
+                                        }
+                                    }
+                                    success
+                                }
+                                FileClipboard.clear()
+                                if (anySuccess) viewModel.notifyFileOpsChanged()
+                            }
+                        }
+                    }
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Filled.ContentPaste, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
+                Spacer(Modifier.width(8.dp))
+                Text(if (cbFiles.size > 1) "Tempel (${cbFiles.size})" else "Tempel", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.labelLarge)
+            }
         }
     }
     }

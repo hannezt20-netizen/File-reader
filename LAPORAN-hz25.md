@@ -77,3 +77,8 @@ Rencana teknis dari sisi hz25 (belum dieksekusi, menunggu konfirmasi hz19 dulu s
 - Label tab sementara masih "Tab 1/2/3/4" generik (bukan nama kategori/folder dinamis) - bisa disempurnakan di iterasi berikutnya kalau dibutuhkan.
 - Menutup tab aktif otomatis pindah ke tab tetangga (kiri, atau tab pertama kalau di posisi 0).
 - Menunggu build+tes di HP. Setelah ini SELESAI & terkonfirmasi, T3 (ikon clipboard mengambang + aturan tempel lintas tab) bisa dimulai.
+
+## Update 15 Sept 2026 - T3: Tombol Bersihkan di clipboard bar
+- [PROSES] Tombol "Bersihkan" (outline, di kiri) ditambah di sebelah tombol "Tempel" yang sudah ada di DirektoriScreen - sesuai mockup 2-tombol yang diminta user. Tap Bersihkan = FileClipboard.clear() tanpa eksekusi paste.
+- Catatan arsitektur: sebagian besar T3 (ikon clipboard mengambang antar-tab, aturan tujuan wajib folder nyata) TERNYATA SUDAH otomatis terpenuhi sejak Tahap 2 - karena FileClipboard bersifat global (bukan per-tab) dan bar Tempel cuma dirender di DirektoriScreen (kategori agregat seperti Gambar/Video memang tidak punya bar Tempel). Jadi cukup tambahan kecil ini untuk melengkapi spek user.
+- Menunggu build+tes di HP.
