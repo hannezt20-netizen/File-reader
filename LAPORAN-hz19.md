@@ -180,3 +180,13 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 - data/FileDao.kt - tambah fungsi getLargestFiles(limit)
 - ui/analisis/AnalisisViewModel.kt (baru) - baca file terbesar langsung dari FileDao, tidak sentuh HomeViewModel.kt
 - ui/analisis/FileBesarScreen.kt (baru) - tampilkan daftar file terbesar, fungsi format ukuran dibuat lokal (tidak pinjam dari file lain)
+
+## 2026-09-15 - Masukkan scaffold yhs13 (Beranda/Analisis/Direktori) ke repo
+
+### Fase Kerja
+- [PROSES] 3 file rancangan yhs13 (sebelumnya cuma ada di chat, belum pernah di-commit) dimasukkan ke repo: AnalisisScreenScaffold.kt, BerandaScreenScaffold.kt, DirektoriScreenScaffold.kt (nama file ditambah "Scaffold" biar tidak bentrok nama fungsi dgn AnalisisScreen lama di HomeScreen.kt)
+- Perbaikan: ketiga file aslinya kurang 1 baris import (FontWeight) yang bikin gagal build - sudah ditambahkan
+- [BELUM] Belum disambungkan ke navigasi/data asli - masih berdiri sendiri, menunggu langkah berikutnya (sambung data File Besar/Garis Besar/Semua Partisi ke Analisis, lalu ganti placeholder Beranda lama)
+
+### Rencana Kerja & File Terkait (aktif)
+- ui/analisis/AnalisisScreenScaffold.kt, ui/beranda/BerandaScreenScaffold.kt, ui/direktori/DirektoriScreenScaffold.kt - scaffold murni, langkah selanjutnya sambungkan data asli & ganti HomeScreen.kt punya lama
