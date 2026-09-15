@@ -194,3 +194,12 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 ## 2026-09-15 (lanjutan) - Fix bug build BerandaScreenScaffold.kt
 
 [BUG AKTIF] Build gagal - Unresolved reference: clip di BerandaScreenScaffold.kt baris 57, 120, 150. Penyebab: lupa import androidx.compose.ui.draw.clip (ada di 2 file scaffold lain tapi kelewat di file ini). Diperbaiki di commit yang sama.
+
+## 2026-09-15 (lanjutan) - Sambungkan halaman Analisis baru ke aplikasi
+
+### Fase Kerja
+- [PROSES] HomeScreen.kt: layar Analisis lama (daftar teks polos) DIHAPUS, diganti AnalisisScreen baru (ui/analisis) + FileBesarScreen sudah bisa dibuka dari kartu "File Besar" (data asli). "Garis Besar" masih data contoh (garisBesarDefault), "Semua Partisi" masih placeholder "Segera hadir" - sesuai urutan kerja (File Besar dulu). Menunggu build+tes HP.
+
+### Rencana Kerja & File Terkait (aktif)
+- HomeScreen.kt: showFileBesar state baru, BackHandler bertingkat (FileBesar > Analisis > kategori)
+- Langkah selanjutnya: bangun query "Garis Besar" (rekap ukuran per kategori) & "Semua Partisi" asli, baru sambung Beranda baru

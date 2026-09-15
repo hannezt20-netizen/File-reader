@@ -42,6 +42,11 @@ import androidx.compose.material.icons.filled.ContentPaste
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yohanes.filereader.ui.analisis.AnalisisScreen
+import com.yohanes.filereader.ui.analisis.AnalisisViewModel
+import com.yohanes.filereader.ui.analisis.FileBesarScreen
+import com.yohanes.filereader.ui.analisis.garisBesarDefault
 
 @Composable
 fun HomeScreen(
@@ -51,11 +56,15 @@ fun HomeScreen(
 ) {
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     var showAnalisis by remember { mutableStateOf(false) }
+    var showFileBesar by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = showAnalisis) {
+    BackHandler(enabled = showFileBesar) {
+        showFileBesar = false
+    }
+    BackHandler(enabled = !showFileBesar && showAnalisis) {
         showAnalisis = false
     }
-    BackHandler(enabled = !showAnalisis && selectedCategory != null) {
+    BackHandler(enabled = !showFileBesar && !showAnalisis && selectedCategory != null) {
         viewModel.onCategorySelected(null)
     }
 
@@ -69,7 +78,20 @@ fun HomeScreen(
             onFileLongClick = onFileLongClick,
             onBack = { viewModel.closeDirektori() }
         )
-        showAnalisis -> AnalisisScreen(onBack = { showAnalisis = false })
+        showFileBesar -> FileBesarScreen()
+        showAnalisis -> {
+            val analisisViewModel: AnalisisViewModel = viewModel()
+            val fileTerbesar by analisisViewModel.fileTerbesar.collectAsState()
+            val storageInfo = remember { getStorageInfo() }
+            AnalisisScreen(
+                ruangBebas = "Ruang bebas: " + formatSize(storageInfo.freeBytes),
+                garisBesar = garisBesarDefault(),
+                subjudulSemuaPartisi = "Segera hadir",
+                subjudulFileBesar = fileTerbesar.firstOrNull()?.let { it.name + " · " + formatSize(it.sizeBytes) } ?: "Tidak ada file",
+                onOpenSemuaPartisi = {},
+                onOpenFileBesar = { showFileBesar = true },
+            )
+        }
         selectedCategory != null -> CategoryDetailScreen(
             viewModel = viewModel,
             category = selectedCategory!!,
@@ -638,31 +660,7 @@ private fun AnalisisCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun AnalisisScreen(onBack: () -> Unit) {
-    Column(Modifier.fillMaxSize()) {
-        Row(
-            Modifier.fillMaxWidth().padding(4.dp, 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
-            }
-            Text("Analisis", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-        }
-        LazyColumn(Modifier.fillMaxSize()) {
-            items(ANALISIS_MENU) { menu ->
-                Row(
-                    Modifier.fillMaxWidth().padding(16.dp, 14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(menu, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                }
-                Divider()
-            }
-        }
-    }
-}
+
 
 @Composable
 private fun categorySolidColor(name: String): androidx.compose.ui.graphics.Color {
