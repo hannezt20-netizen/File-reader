@@ -52,6 +52,7 @@ import com.yohanes.filereader.ui.analisis.garisBesarDefault
 fun HomeScreen(
     viewModel: HomeViewModel,
     onFileClick: (FileEntity) -> Unit,
+    onOpenPager: (List<com.yohanes.filereader.data.FileEntity>, com.yohanes.filereader.data.FileEntity) -> Unit,
     onPickFileManually: () -> Unit
 ) {
     val selectedCategory by viewModel.selectedCategory.collectAsState()
@@ -76,6 +77,7 @@ fun HomeScreen(
             viewModel = viewModel,
             onFileClick = onFileClick,
             onFileLongClick = onFileLongClick,
+            onOpenPager = onOpenPager,
             onBack = { viewModel.closeDirektori() }
         )
         showFileBesar -> FileBesarScreen(onFileClick = onFileClick)
@@ -289,6 +291,7 @@ private fun DirektoriScreen(
     viewModel: HomeViewModel,
     onFileClick: (FileEntity) -> Unit,
     onFileLongClick: (FileEntity) -> Unit,
+    onOpenPager: (List<com.yohanes.filereader.data.FileEntity>, com.yohanes.filereader.data.FileEntity) -> Unit,
     onBack: () -> Unit
 ) {
     val rootPath = android.os.Environment.getExternalStorageDirectory().path
@@ -496,7 +499,16 @@ private fun DirektoriScreen(
                             file = fileEntity,
                             isSelected = selectedPaths.contains(fileEntity.path),
                             onClick = {
-                                if (isSelectionMode) viewModel.toggleSelect(fileEntity) else onFileClick(fileEntity)
+                                if (isSelectionMode) {
+                                    viewModel.toggleSelect(fileEntity)
+                                } else if (fileEntity.extension in setOf("jpg","jpeg","png","webp","gif")) {
+                                    val imageExts = setOf("jpg","jpeg","png","webp","gif")
+                                    val photosInFolder = entries.filter { !it.isDirectory && it.extension.lowercase() in imageExts }
+                                        .map { e -> FileEntity(path = e.absolutePath, name = e.name, extension = e.extension.lowercase(), sizeBytes = e.length(), lastModified = e.lastModified()) }
+                                    onOpenPager(photosInFolder, fileEntity)
+                                } else {
+                                    onFileClick(fileEntity)
+                                }
                             },
                             onLongClick = { onFileLongClick(fileEntity) }
                         )

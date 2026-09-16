@@ -31,3 +31,11 @@ Perbaikan padding Beranda/kategori & toggle Video sudah dikonfirmasi selesai. Se
 
 ## Log Pencapaian
 - Revisi fix sebelumnya: clipOwnBounds=true ternyata ikut menyalakan gesture handler per-halaman yang dobel dengan overlay global, bikin scroll macet total (bahkan saat belum zoom). Diperbaiki: clipToBounds dipisah agar selalu aktif (cegah bertumpuk), tapi syarat gesture handler per-halaman dikembalikan seperti semula (hanya overlay global yang dengar sentuhan, cegah rebutan gesture).
+
+
+## Update 15 Sept 2026 - Verifikasi visual SettingsPanel PDF (checklist final)
+- [SELESAI] Verifikasi visual SettingsPanel PDF (Kontras, Warna Latar, Mode Baca, TTS, ID/terjemahan, Zoom, Scroll) - dikonfirmasi user via checklist 7 poin, semua OK dengan 2 catatan bukan-bug:
+  1. Warna Latar tidak berlaku di mode biasa (tampilan gambar halaman apa adanya) - wajar, mode biasa menampilkan bitmap hasil PdfRenderer, bukan teks yang bisa diwarnai ulang seperti mode Baca
+  2. Sebagian PDF (terutama hasil bajakan/ilegal dengan watermark teks tertanam) menampilkan teks watermark ikut tercampur di mode Baca, karena watermark itu memang bagian dari teks asli PDF yang diekstrak - bukan salah ambil dari sisi app
+- Bug scroll/zoom mode Scroll (sempat dipatch bertahap manual oleh hz21) akhirnya diselesaikan hz11 dengan integrasi library Telephoto (me.saket.telephoto:zoomable) - kode gesture manual lama sudah dihapus dari PdfViewerScreen.kt
+- Fitur baru: Filter Teks per-dokumen di mode Baca (lihat TextFilterStore.kt) - saring kalimat watermark/iklan yang ikut ketarik saat ekstraksi teks, khusus per file (tidak global)

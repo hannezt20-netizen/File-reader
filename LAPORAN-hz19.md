@@ -225,3 +225,8 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 ### Fase Kerja
 - [PROSES] CategoryHomeScreen (HomeScreen.kt): StorageCard+AnalisisCard+CategoryCircleCard kotak lama diganti StorageAnalisisRow+KategoriGrid (bulat warna-warni sesuai mockup, dari ui/beranda scaffold). Search bar+refresh+state kosong TIDAK diubah (tetap versi lama, di luar scope langkah ini). Angka jumlah file per kategori sengaja dihilangkan dari grid baru (mockup tidak menampilkannya). Menunggu build+tes HP.
 - [BELUM] Fungsi lama StorageCard/AnalisisCard/CategoryCircleCard/categoryContainerColor jadi kode mati (tidak dipakai lagi) - dibersihkan nanti sekalian pas nyentuh file ini lagi
+
+## 2026-09-16 (swipe foto dari Direktori)
+- [PROSES] Tambah fitur: foto yang dibuka dari dalam folder Direktori sekarang bisa di-swipe ke foto lain dalam folder yang sama (pakai ImagePagerScreen, bukan ImageViewerScreen 1-foto lagi)
+- Perubahan: MainActivity.kt (state pagerPhotos+pagerIndex, gate TabBar diperluas, blok render ImagePagerScreen baru), HomeScreen.kt (parameter onOpenPager diteruskan sampai DirektoriScreen, FileRow onClick filter foto di folder aktif)
+- Status: kode sudah ditempel semua, BELUM sempat dicoba build (gradlew tidak ada di HP, ngandelin GitHub Actions)

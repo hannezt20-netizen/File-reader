@@ -40,6 +40,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.style.TextOverflow
 import com.yohanes.filereader.data.FavoritesStore
+import com.yohanes.filereader.data.TextFilterStore
 import com.yohanes.filereader.data.PdfTextExtractor
 import com.yohanes.filereader.data.OcrStore
 import androidx.compose.foundation.rememberScrollState
@@ -113,11 +114,14 @@ fun PdfViewerScreen(uri: Uri, displayName: String) {
     val favKey = uri.path ?: uri.toString()
     val favorites by FavoritesStore.favorites.collectAsState()
     val isFav = favorites.contains(favKey)
+    val allTextFilters by TextFilterStore.filters.collectAsState()
+    val currentFilterCount = allTextFilters[favKey]?.size ?: 0
 
     var modeBacaActive by remember { mutableStateOf(false) }
     var translateActive by remember { mutableStateOf(false) }
     var settingsModalOpen by remember { mutableStateOf(false) }
     var pageGridOpen by remember { mutableStateOf(false) }
+    var filterDialogOpen by remember { mutableStateOf(false) }
     var fullscreenImages by remember { mutableStateOf<List<Bitmap>?>(null) }
     val scope = rememberCoroutineScope()
 
@@ -158,9 +162,13 @@ fun PdfViewerScreen(uri: Uri, displayName: String) {
     BackHandler(enabled = fullscreenImages == null && !ttsPanelExpanded && !settingsModalOpen && modeBacaActive) {
         modeBacaActive = false
     }
+    BackHandler(enabled = filterDialogOpen) {
+        filterDialogOpen = false
+    }
 
     LaunchedEffect(Unit) {
         ReaderSettingsStore.ensureLoaded(context)
+        TextFilterStore.init(context)
     }
     val readerSettings by ReaderSettingsStore.settings.collectAsState()
 
@@ -218,7 +226,7 @@ fun PdfViewerScreen(uri: Uri, displayName: String) {
             }
 
             suspend fun loadTtsSentences(pageIndex: Int): List<String> {
-                val extracted = PdfTextExtractor.extractPageText(context, uri, pageIndex) ?: ""
+                val extracted = TextFilterStore.applyFilter(favKey, PdfTextExtractor.extractPageText(context, uri, pageIndex) ?: "")
                 if (extracted.isBlank()) return emptyList()
                 val sourceText = if (translateActive) {
                     val cacheKey = "$displayName|$pageIndex"
@@ -462,10 +470,19 @@ fun PdfViewerScreen(uri: Uri, displayName: String) {
                                 onTextSizeChange = { ReaderSettingsStore.setTextSize(context, it) },
                                 onContrastChange = { ReaderSettingsStore.setContrast(context, it) },
                                 onWarnaLatarChange = { ReaderSettingsStore.setWarnaLatar(context, it) },
-                                onNavModeChange = { ReaderSettingsStore.setNavMode(context, it) }
+                                onNavModeChange = { ReaderSettingsStore.setNavMode(context, it) },
+                                filterCount = currentFilterCount,
+                                onFilterTeksClick = { filterDialogOpen = true }
                             )
                         }
                     }
+                }
+
+                if (filterDialogOpen) {
+                    FilterTeksDialog(
+                        docKey = favKey,
+                        onDismiss = { filterDialogOpen = false }
+                    )
                 }
 
                 if (pageGridOpen) {
@@ -676,7 +693,9 @@ private fun SettingsPanel(
     onTextSizeChange: (Float) -> Unit,
     onContrastChange: (Float) -> Unit,
     onWarnaLatarChange: (BacaWarnaLatar) -> Unit,
-    onNavModeChange: (NavigasiMode) -> Unit
+    onNavModeChange: (NavigasiMode) -> Unit,
+    filterCount: Int,
+    onFilterTeksClick: () -> Unit
 ) {
     Column(
         Modifier
@@ -788,6 +807,119 @@ private fun SettingsPanel(
     }
 }
 
+@Composable
+private fun FilterTeksDialog(docKey: String, onDismiss: () -> Unit) {
+    val allFilters by TextFilterStore.filters.collectAsState()
+    val phrases = (allFilters[docKey] ?: emptySet()).toList()
+    var inputText by remember { mutableStateOf("") }
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.7f))
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { onDismiss() },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.75f)
+                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+                .background(androidx.compose.ui.graphics.Color(0xFF1C1C1E))
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { }
+                .padding(16.dp)
+        ) {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Filter Teks (dokumen ini)",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = androidx.compose.ui.graphics.Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(onClick = onDismiss) {
+                    Text("✕", color = androidx.compose.ui.graphics.Color.White, style = MaterialTheme.typography.titleMedium)
+                }
+            }
+            Text(
+                "Kalimat di bawah ini akan disembunyikan dari mode Baca & TTS, khusus untuk dokumen ini saja.",
+                style = MaterialTheme.typography.bodySmall,
+                color = androidx.compose.ui.graphics.Color.LightGray,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            LazyColumn(Modifier.weight(1f)) {
+                items(phrases) { phrase ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            phrase,
+                            color = androidx.compose.ui.graphics.Color.White,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(androidx.compose.foundation.shape.RoundedCornerShape(6.dp))
+                                .background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.15f))
+                                .clickable { TextFilterStore.removeFilter(docKey, phrase) },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("✕", color = androidx.compose.ui.graphics.Color(0xFFFF7043), style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+            }
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = inputText,
+                    onValueChange = { inputText = it },
+                    placeholder = { Text("Tempel/ketik kalimat di sini") },
+                    modifier = Modifier.weight(1f),
+                    singleLine = false,
+                    maxLines = 3
+                )
+                Spacer(Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                        .background(androidx.compose.ui.graphics.Color(0xFF4DD0E1))
+                        .clickable {
+                            if (inputText.isNotBlank()) {
+                                TextFilterStore.addFilter(docKey, inputText)
+                                inputText = ""
+                            }
+                        }
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Tambah", color = androidx.compose.ui.graphics.Color.Black, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        }
+    }
+}
+
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun ReflowPage(
@@ -816,7 +948,9 @@ private fun ReflowPage(
     LaunchedEffect(pageIndex) {
         bitmap = PdfTextExtractor.extractMainImage(context, uri, pageIndex)
         imageLoadDone = true
-        val text = PdfTextExtractor.extractPageText(context, uri, pageIndex)
+        val rawText = PdfTextExtractor.extractPageText(context, uri, pageIndex)
+        val docKey = uri.path ?: uri.toString()
+        val text = if (rawText != null) TextFilterStore.applyFilter(docKey, rawText) else rawText
         extractedText = text
         if (text.isNullOrBlank()) {
             OcrStore.ensureWindow(context, uri, displayName, pageCount, pageIndex)

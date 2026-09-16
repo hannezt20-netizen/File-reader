@@ -47,6 +47,8 @@ class MainActivity : ComponentActivity() {
     private var currentName by mutableStateOf("")
     private var currentContent by mutableStateOf("")
     private var isLoadingContent by mutableStateOf(false)
+    private var pagerPhotos by mutableStateOf<List<com.yohanes.filereader.data.FileEntity>>(emptyList())
+    private var pagerIndex by mutableStateOf<Int?>(null)
 
     private val openDocumentLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -186,7 +188,7 @@ class MainActivity : ComponentActivity() {
                 currentUri = null
             }
         }
-        if (uri == null) {
+        if (uri == null && pagerIndex == null) {
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val drawerScope = rememberCoroutineScope()
             ModalNavigationDrawer(
@@ -233,6 +235,10 @@ class MainActivity : ComponentActivity() {
                             viewModel = homeViewModel,
                             onFileClick = { file ->
                                 loadFile(android.net.Uri.fromFile(java.io.File(file.path)))
+                            },
+                            onOpenPager = { files, clicked ->
+                                pagerPhotos = files
+                                pagerIndex = files.indexOf(clicked)
                             },
                             onPickFileManually = {
                                 openDocumentLauncher.launch(
@@ -291,6 +297,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
             }
+            return
+        }
+
+        if (pagerIndex != null) {
+            com.yohanes.filereader.ui.ImagePagerScreen(
+                files = pagerPhotos,
+                initialIndex = pagerIndex!!,
+                onExit = { pagerIndex = null }
+            )
             return
         }
 
