@@ -309,14 +309,14 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        val uri = uri!!
+        val openUri = uri!!
 
         when (currentType) {
-            FileType.PDF -> PdfViewerScreen(uri = uri, displayName = currentName)
-            FileType.IMAGE -> com.yohanes.filereader.ui.ImageViewerScreen(uri = uri, displayName = currentName, onExit = { currentUri = null })
-            FileType.XLSX -> com.yohanes.filereader.ui.XlsxViewerScreen(uri = uri, displayName = currentName, onExit = { currentUri = null })
-            FileType.VIDEO -> com.yohanes.filereader.VideoPlayerScreen(uri = uri, displayName = currentName, onExit = { currentUri = null })
-            FileType.AUDIO -> AudioPlayerScreen(filePath = uri.path ?: uri.toString())
+            FileType.PDF -> PdfViewerScreen(uri = openUri, displayName = currentName)
+            FileType.IMAGE -> com.yohanes.filereader.ui.ImageViewerScreen(uri = openUri, displayName = currentName, onExit = { currentUri = null })
+            FileType.XLSX -> com.yohanes.filereader.ui.XlsxViewerScreen(uri = openUri, displayName = currentName, onExit = { currentUri = null })
+            FileType.VIDEO -> com.yohanes.filereader.VideoPlayerScreen(uri = openUri, displayName = currentName, onExit = { currentUri = null })
+            FileType.AUDIO -> AudioPlayerScreen(filePath = openUri.path ?: openUri.toString())
             FileType.UNKNOWN -> UnsupportedState(currentName)
             else -> {
                 if (isLoadingContent) {
@@ -325,11 +325,11 @@ class MainActivity : ComponentActivity() {
                     }
                 } else {
                     CodeEditorScreen(
-                        uri = uri,
+                        uri = openUri,
                         displayName = currentName,
                         fileType = currentType,
                         initialContent = currentContent,
-                        onSave = { text -> writeText(uri, text) },
+                        onSave = { text -> writeText(openUri, text) },
                         onSaveAs = { text ->
                             pendingSaveAsText = text
                             createDocumentLauncher.launch(currentName)
