@@ -230,3 +230,7 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 - [PROSES] Tambah fitur: foto yang dibuka dari dalam folder Direktori sekarang bisa di-swipe ke foto lain dalam folder yang sama (pakai ImagePagerScreen, bukan ImageViewerScreen 1-foto lagi)
 - Perubahan: MainActivity.kt (state pagerPhotos+pagerIndex, gate TabBar diperluas, blok render ImagePagerScreen baru), HomeScreen.kt (parameter onOpenPager diteruskan sampai DirektoriScreen, FileRow onClick filter foto di folder aktif)
 - Status: kode sudah ditempel semua, BELUM sempat dicoba build (gradlew tidak ada di HP, ngandelin GitHub Actions)
+
+## 2026-09-16 (lanjutan - fix build error)
+- Build pertama GAGAL: "Type mismatch: inferred type is Uri? but Uri was expected" di beberapa baris pemanggilan viewer - Kotlin ragu lagi soal `uri` (smart-cast) setelah nambah pengecekan pagerIndex
+- Fix: tambah `val uri = uri!!` tepat sebelum `when (currentType)`, setelah blok pagerIndex
