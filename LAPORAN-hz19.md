@@ -234,3 +234,9 @@ Status: [SELESAI] - build hijau, dikonfirmasi user (2026-09-11). Animasi buka/tu
 ## 2026-09-16 (lanjutan - fix build error)
 - Build pertama GAGAL: "Type mismatch: inferred type is Uri? but Uri was expected" di beberapa baris pemanggilan viewer - Kotlin ragu lagi soal `uri` (smart-cast) setelah nambah pengecekan pagerIndex
 - Fix: tambah `val uri = uri!!` tepat sebelum `when (currentType)`, setelah blok pagerIndex
+
+## 2026-09-16 (lanjutan - satukan jalur Gambar ke pintu tunggal)
+- Jalur pager foto dari kartu Gambar (ImageGalleryScreen.kt) disatukan ke pintu tunggal MainActivity (pagerIndex/pagerPhotos), sama seperti Direktori
+- Perubahan: ImageGalleryScreen.kt (hapus state lokal, 3 titik onClick pakai onOpenPager param), HomeScreen.kt (CategoryDetailScreen dapat param onOpenPager baru diteruskan ke ImageGalleryScreen)
+- Tujuan: TabBar ke-gate juga di jalur Gambar (bug lama dari screenshot), bukan cuma di Direktori
+- Status: BELUM di-build/test

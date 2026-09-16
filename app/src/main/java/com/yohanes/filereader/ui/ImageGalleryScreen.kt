@@ -160,6 +160,7 @@ fun ImageGalleryScreen(
     selectedFolderPath: String?,
     onFolderSelected: (String?) -> Unit,
     onFileClick: (FileEntity) -> Unit,
+    onOpenPager: (List<FileEntity>, FileEntity) -> Unit,
     onFileLongClick: (FileEntity) -> Unit,
     selectedPaths: Set<String>,
     isSelectionMode: Boolean,
@@ -185,18 +186,6 @@ fun ImageGalleryScreen(
     onToggleDate: (String, String) -> Unit,
     onLoadAccordionSummaries: () -> Unit
 ) {
-    var pagerIndex by remember { mutableStateOf<Int?>(null) }
-    var pagerPhotos by remember { mutableStateOf<List<FileEntity>>(emptyList()) }
-
-    if (pagerIndex != null) {
-        ImagePagerScreen(
-            files = pagerPhotos,
-            initialIndex = pagerIndex!!,
-            onExit = { pagerIndex = null }
-        )
-        return
-    }
-
     BackHandler(enabled = (mode == VideoGalleryMode.FOLDER && selectedFolderPath != null) || isSelectionMode) {
         if (isSelectionMode) onClearSelection() else onFolderSelected(null)
     }
@@ -246,8 +235,7 @@ fun ImageGalleryScreen(
                                     } else {
                                         val idx = selectedFolder.photos.indexOfFirst { it.path == file.path }
                                         if (idx >= 0) {
-                                            pagerPhotos = selectedFolder.photos
-                                            pagerIndex = idx
+                                            onOpenPager(selectedFolder.photos, file)
                                         }
                                     }
                                 }
@@ -288,14 +276,6 @@ fun ImageGalleryScreen(
 
     // Mode Terbaru - tetap pakai sistem paging yang sudah ada (ringan untuk koleksi besar).
     val pagingItems = imagesFlow.collectAsLazyPagingItems()
-
-    val onOpenPager: (List<FileEntity>, FileEntity) -> Unit = { list, file ->
-        val idx = list.indexOfFirst { it.path == file.path }
-        if (idx >= 0) {
-            pagerPhotos = list
-            pagerIndex = idx
-        }
-    }
 
     val accordionGridItems = remember(
         pastMonthsInCurrentYear, pastMonthsPreview, pastYears, pastYearsPreview,
@@ -380,8 +360,7 @@ fun ImageGalleryScreen(
                                         .map { it.file }
                                     val clickedIndex = photoList.indexOfFirst { it.path == item.file.path }
                                     if (clickedIndex >= 0) {
-                                        pagerPhotos = photoList
-                                        pagerIndex = clickedIndex
+                                        onOpenPager(photoList, item.file)
                                     }
                                 }
                             }

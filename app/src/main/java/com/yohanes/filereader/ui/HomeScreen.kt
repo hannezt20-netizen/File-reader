@@ -99,6 +99,7 @@ fun HomeScreen(
             category = selectedCategory!!,
             onBack = { viewModel.onCategorySelected(null) },
             onFileClick = onFileClick,
+            onOpenPager = onOpenPager,
             onFileLongClick = onFileLongClick
         )
         else -> CategoryHomeScreen(
@@ -753,6 +754,7 @@ private fun CategoryDetailScreen(
     category: String,
     onBack: () -> Unit,
     onFileClick: (FileEntity) -> Unit,
+    onOpenPager: (List<FileEntity>, FileEntity) -> Unit,
     onFileLongClick: (FileEntity) -> Unit
 ) {
     val files by viewModel.files.collectAsState()
@@ -791,6 +793,7 @@ private fun CategoryDetailScreen(
                 selectedFolderPath = selectedImageFolder,
                 onFolderSelected = { viewModel.selectImageFolder(it) },
                 onFileClick = onFileClick,
+                onOpenPager = onOpenPager,
                 onFileLongClick = onFileLongClick,
                 selectedPaths = selectedPaths,
                 isSelectionMode = isSelectionMode,
